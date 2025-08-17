@@ -265,96 +265,25 @@
 					</div>
 				</div>
 			</div>
-			<div class="row row-0-gutter">
-				<!-- start perfume item -->
-				<div class="col-md-6 col-0-gutter">
-					<div class="ot-portfolio-item">
-						<figure class="effect-bubba">
-							<img src="images/demo/portfolio-1.jpg" alt="Chanel No. 5" class="img-responsive" />
-							<figcaption>
-								<h2>Chanel No. 5</h2>
-								<p>Floral Clásico • $2,850 MXN</p>
-								<a href="#" data-toggle="modal" data-target="#Modal-1" onclick="trackPortfolioView('Chanel No. 5')">Ver detalles</a>
-							</figcaption>
-						</figure>
-					</div>
-				</div>
-				<!-- end perfume item -->
-				<!-- start perfume item -->
-				<div class="col-md-6 col-0-gutter">
-					<div class="ot-portfolio-item">
-						<figure class="effect-bubba">
-							<img src="images/demo/portfolio-2.jpg" alt="Dior Sauvage" class="img-responsive" />
-							<figcaption>
-								<h2>Dior Sauvage</h2>
-								<p>Fresco Masculino • $2,450 MXN</p>
-								<a href="#" data-toggle="modal" data-target="#Modal-2">Ver detalles</a>
-							</figcaption>
-						</figure>
-					</div>
-				</div>
-				<!-- end perfume item -->
+
+			<!-- Loading indicator -->
+			<div id="productos-loading" class="text-center" style="padding: 50px;">
+				<i class="fa fa-spinner fa-spin fa-3x" style="color: #D4A574;"></i>
+				<p style="margin-top: 20px; color: #666;">Cargando productos...</p>
 			</div>
-			<div class="row row-0-gutter">
-				<!-- start perfume item -->
-				<div class="col-md-6 col-0-gutter">
-					<div class="ot-portfolio-item">
-						<figure class="effect-bubba">
-							<img src="images/demo/portfolio-3.jpg" alt="Tom Ford Black Orchid" class="img-responsive" />
-							<figcaption>
-								<h2>Tom Ford Black Orchid</h2>
-								<p>Oriental Sensual • $3,200 MXN</p>
-								<a href="#" data-toggle="modal" data-target="#Modal-3">Ver detalles</a>
-							</figcaption>
-						</figure>
-					</div>
-				</div>
-				<!-- end perfume item -->
-				<!-- start perfume item -->
-				<div class="col-md-6 col-0-gutter">
-					<div class="ot-portfolio-item">
-						<figure class="effect-bubba">
-							<img src="images/demo/portfolio-4.jpg" alt="Yves Saint Laurent Libre" class="img-responsive" />
-							<figcaption>
-								<h2>YSL Libre</h2>
-								<p>Floral Moderno • $2,650 MXN</p>
-								<a href="#" data-toggle="modal" data-target="#Modal-4">Ver detalles</a>
-							</figcaption>
-						</figure>
-					</div>
-				</div>
-				<!-- end perfume item -->
+
+			<!-- Container for dynamic products -->
+			<div id="productos-container">
+				<!-- Products will be loaded here dynamically -->
 			</div>
-			<div class="row row-0-gutter">
-				<!-- start perfume item -->
-				<div class="col-md-6 col-0-gutter">
-					<div class="ot-portfolio-item">
-						<figure class="effect-bubba">
-							<img src="images/demo/portfolio-5.jpg" alt="Versace Eros" class="img-responsive" />
-							<figcaption>
-								<h2>Versace Eros</h2>
-								<p>Amaderado Masculino • $2,350 MXN</p>
-								<a href="#" data-toggle="modal" data-target="#Modal-5">Ver detalles</a>
-							</figcaption>
-						</figure>
-					</div>
-				</div>
-				<!-- end perfume item -->
-				<!-- start perfume item -->
-				<div class="col-md-6 col-0-gutter">
-					<div class="ot-portfolio-item">
-						<figure class="effect-bubba">
-							<img src="images/demo/portfolio-6.jpg" alt="Viktor & Rolf Flowerbomb" class="img-responsive" />
-							<figcaption>
-								<h2>V&R Flowerbomb</h2>
-								<p>Gourmand Femenino • $2,950 MXN</p>
-								<a href="#" data-toggle="modal" data-target="#Modal-6">Ver detalles</a>
-							</figcaption>
-						</figure>
-					</div>
-				</div>
-				<!-- end perfume item -->
+
+			<!-- No products message -->
+			<div id="no-productos" class="text-center" style="display: none; padding: 50px;">
+				<i class="fa fa-info-circle fa-3x" style="color: #D4A574;"></i>
+				<h3 style="margin-top: 20px; color: #666;">Próximamente nuevos productos</h3>
+				<p style="color: #999;">Estamos preparando una selección especial de fragancias para ti.</p>
 			</div>
+
 			</div><!-- container -->
 		</section>
 
@@ -847,329 +776,9 @@
 			</div>
 		</footer>
 
-		<!-- Modal for perfume item 1 -->
-		<div class="modal fade" id="Modal-1" tabindex="-1" role="dialog" aria-labelledby="Modal-label-1">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="Modal-label-1">Chanel No. 5</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-5">
-								<img src="images/demo/portfolio-1.jpg" alt="Chanel No. 5 - Perfume Clásico" class="img-responsive perfume-modal-img" />
-								<div class="modal-works"><span>Floral</span><span>Clásico</span><span>Femenino</span></div>
-								<div class="perfume-description">
-									<p>El icónico Chanel No. 5 es sinónimo de elegancia y sofisticación. Esta fragancia legendaria ha cautivado a mujeres de todo el mundo durante décadas con su composición floral única y su carácter inconfundible.</p>
-								</div>
-							</div>
-							<div class="col-md-7">
-								<div class="perfume-details">
-									<h5><strong>Precio: $2,850 MXN</strong></h5>
-									<div class="perfume-info-grid">
-										<div class="info-item">
-											<strong>Tamaños disponibles:</strong>
-											<span>50ml, 100ml</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de salida:</strong>
-											<span>Neroli, Ylang-ylang, Aldehídos</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de corazón:</strong>
-											<span>Rosa, Jazmín, Lirio de los valles</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de fondo:</strong>
-											<span>Sándalo, Vetiver, Vainilla</span>
-										</div>
-										<div class="info-item">
-											<strong>Ocasión:</strong>
-											<span>Elegante, atemporal, perfecto para ocasiones especiales</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a href="https://wa.me/525512345678?text=Hola%20Elena%2C%20me%20interesa%20el%20perfume%20Chanel%20No.%205%20%28%242%2C850%20MXN%29.%20%C2%BFPodr%C3%ADas%20darme%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" class="btn btn-primary">Consultar por WhatsApp</a>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<!-- Dynamic modals will be generated here by JavaScript -->
 
-		<!-- Modal for perfume item 2 -->
-		<div class="modal fade" id="Modal-2" tabindex="-1" role="dialog" aria-labelledby="Modal-label-2">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="Modal-label-2">Dior Sauvage</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-5">
-								<img src="images/demo/portfolio-2.jpg" alt="Dior Sauvage - Perfume Masculino" class="img-responsive perfume-modal-img" />
-								<div class="modal-works"><span>Fresco</span><span>Masculino</span><span>Versátil</span></div>
-								<div class="perfume-description">
-									<p>Dior Sauvage es la fragancia masculina más popular de la actualidad. Su frescura radiante y su carácter magnético lo convierten en la elección perfecta para el hombre contemporáneo que busca una fragancia versátil y seductora.</p>
-								</div>
-							</div>
-							<div class="col-md-7">
-								<div class="perfume-details">
-									<h5><strong>Precio: $2,450 MXN</strong></h5>
-									<div class="perfume-info-grid">
-										<div class="info-item">
-											<strong>Tamaños disponibles:</strong>
-											<span>60ml, 100ml</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de salida:</strong>
-											<span>Bergamota, Pimienta rosa</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de corazón:</strong>
-											<span>Lavanda, Geranio, Elemi</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de fondo:</strong>
-											<span>Ambroxan, Cedro, Labdanum</span>
-										</div>
-										<div class="info-item">
-											<strong>Ocasión:</strong>
-											<span>Diario, deportivo, perfecto para hombre moderno</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a href="https://wa.me/525512345678?text=Hola%20Elena%2C%20me%20interesa%20el%20perfume%20Dior%20Sauvage%20%28%242%2C450%20MXN%29.%20%C2%BFPodr%C3%ADas%20darme%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" class="btn btn-primary">Consultar por WhatsApp</a>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					</div>
-				</div>
-			</div>
-		</div>
 
-		<!-- Modal for perfume item 3 -->
-		<div class="modal fade" id="Modal-3" tabindex="-1" role="dialog" aria-labelledby="Modal-label-3">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="Modal-label-3">Tom Ford Black Orchid</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-5">
-								<img src="images/demo/portfolio-3.jpg" alt="Tom Ford Black Orchid - Perfume Oriental" class="img-responsive perfume-modal-img" />
-								<div class="modal-works"><span>Oriental</span><span>Sensual</span><span>Unisex</span></div>
-								<div class="perfume-description">
-									<p>Black Orchid de Tom Ford es una fragancia misteriosa y seductora que combina notas florales oscuras con especias exóticas. Su carácter único y sofisticado la convierte en la elección perfecta para quienes buscan destacar con elegancia.</p>
-								</div>
-							</div>
-							<div class="col-md-7">
-								<div class="perfume-details">
-									<h5><strong>Precio: $3,200 MXN</strong></h5>
-									<div class="perfume-info-grid">
-										<div class="info-item">
-											<strong>Tamaños disponibles:</strong>
-											<span>50ml, 100ml</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de salida:</strong>
-											<span>Trufa, Bergamota, Ylang-ylang</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de corazón:</strong>
-											<span>Orquídea negra, Especias, Gardenia</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de fondo:</strong>
-											<span>Chocolate negro, Vainilla, Sándalo</span>
-										</div>
-										<div class="info-item">
-											<strong>Ocasión:</strong>
-											<span>Nocturno, seductor, perfecto para ocasiones especiales</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a href="https://wa.me/525512345678?text=Hola%20Elena%2C%20me%20interesa%20el%20perfume%20Tom%20Ford%20Black%20Orchid%20%28%243%2C200%20MXN%29.%20%C2%BFPodr%C3%ADas%20darme%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" class="btn btn-primary">Consultar por WhatsApp</a>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal for perfume item 4 -->
-		<div class="modal fade" id="Modal-4" tabindex="-1" role="dialog" aria-labelledby="Modal-label-4">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="Modal-label-4">YSL Libre</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-5">
-								<img src="images/demo/portfolio-4.jpg" alt="YSL Libre - Perfume Femenino" class="img-responsive perfume-modal-img" />
-								<div class="modal-works"><span>Floral</span><span>Moderno</span><span>Femenino</span></div>
-								<div class="perfume-description">
-									<p>YSL Libre es la fragancia de la mujer libre y audaz. Su combinación única de lavanda y flor de naranjo crea una firma olfativa moderna y empoderadora, perfecta para la mujer que vive la vida en sus propios términos.</p>
-								</div>
-							</div>
-							<div class="col-md-7">
-								<div class="perfume-details">
-									<h5><strong>Precio: $2,650 MXN</strong></h5>
-									<div class="perfume-info-grid">
-										<div class="info-item">
-											<strong>Tamaños disponibles:</strong>
-											<span>50ml, 90ml</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de salida:</strong>
-											<span>Mandarina, Grosella negra, Lavanda</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de corazón:</strong>
-											<span>Flor de naranjo, Jazmín, Orquídea</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de fondo:</strong>
-											<span>Vainilla, Ambergris, Cedro</span>
-										</div>
-										<div class="info-item">
-											<strong>Ocasión:</strong>
-											<span>Diario, empoderador, perfecto para mujer moderna</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a href="https://wa.me/525512345678?text=Hola%20Elena%2C%20me%20interesa%20el%20perfume%20YSL%20Libre%20%28%242%2C650%20MXN%29.%20%C2%BFPodr%C3%ADas%20darme%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" class="btn btn-primary">Consultar por WhatsApp</a>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal for perfume item 5 -->
-		<div class="modal fade" id="Modal-5" tabindex="-1" role="dialog" aria-labelledby="Modal-label-5">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="Modal-label-5">Versace Eros</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-5">
-								<img src="images/demo/portfolio-5.jpg" alt="Versace Eros - Perfume Masculino" class="img-responsive perfume-modal-img" />
-								<div class="modal-works"><span>Amaderado</span><span>Masculino</span><span>Seductor</span></div>
-								<div class="perfume-description">
-									<p>Versace Eros es la fragancia del amor y la pasión. Su combinación fresca y amaderada crea una estela irresistible que despierta los sentidos. Inspirado en el dios griego del amor, es perfecto para el hombre que quiere causar una impresión duradera.</p>
-								</div>
-							</div>
-							<div class="col-md-7">
-								<div class="perfume-details">
-									<h5><strong>Precio: $2,350 MXN</strong></h5>
-									<div class="perfume-info-grid">
-										<div class="info-item">
-											<strong>Tamaños disponibles:</strong>
-											<span>50ml, 100ml</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de salida:</strong>
-											<span>Menta, Manzana verde, Limón</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de corazón:</strong>
-											<span>Tonka, Geranio, Ambroxan</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de fondo:</strong>
-											<span>Vainilla, Vetiver, Roble</span>
-										</div>
-										<div class="info-item">
-											<strong>Ocasión:</strong>
-											<span>Seductor, juvenil, perfecto para conquistar</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a href="https://wa.me/525512345678?text=Hola%20Elena%2C%20me%20interesa%20el%20perfume%20Versace%20Eros%20%28%242%2C350%20MXN%29.%20%C2%BFPodr%C3%ADas%20darme%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" class="btn btn-primary">Consultar por WhatsApp</a>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Modal for perfume item 6 -->
-		<div class="modal fade" id="Modal-6" tabindex="-1" role="dialog" aria-labelledby="Modal-label-6">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="Modal-label-6">Viktor & Rolf Flowerbomb</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-md-5">
-								<img src="images/demo/portfolio-6.jpg" alt="Viktor & Rolf Flowerbomb - Perfume Gourmand" class="img-responsive perfume-modal-img" />
-								<div class="modal-works"><span>Gourmand</span><span>Femenino</span><span>Dulce</span></div>
-								<div class="perfume-description">
-									<p>Flowerbomb es una explosión de feminidad y sensualidad. Esta fragancia gourmand combina notas florales con toques dulces y especiados, creando una estela irresistible que envuelve a quien la lleva en un aura de elegancia y misterio.</p>
-								</div>
-							</div>
-							<div class="col-md-7">
-								<div class="perfume-details">
-									<h5><strong>Precio: $2,950 MXN</strong></h5>
-									<div class="perfume-info-grid">
-										<div class="info-item">
-											<strong>Tamaños disponibles:</strong>
-											<span>50ml, 100ml</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de salida:</strong>
-											<span>Bergamota, Té verde, Osmanthus</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de corazón:</strong>
-											<span>Sambac, Orquídea, Freesia</span>
-										</div>
-										<div class="info-item">
-											<strong>Notas de fondo:</strong>
-											<span>Almizcle, Vainilla, Pachulí</span>
-										</div>
-										<div class="info-item">
-											<strong>Ocasión:</strong>
-											<span>Romántico, dulce, perfecto para citas especiales</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a href="https://wa.me/525512345678?text=Hola%20Elena%2C%20me%20interesa%20el%20perfume%20Viktor%20%26%20Rolf%20Flowerbomb%20%28%242%2C950%20MXN%29.%20%C2%BFPodr%C3%ADas%20darme%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" class="btn btn-primary">Consultar por WhatsApp</a>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					</div>
-				</div>
-			</div>
-		</div>
 
 		<!-- Bootstrap core JavaScript
 			================================================== -->
@@ -1178,6 +787,167 @@
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/SmoothScroll.js"></script>
 		<script src="js/theme-scripts.js"></script>
+
+		<!-- Dynamic Products Loading Script -->
+		<script>
+		// Function to load products dynamically
+		function loadProductos() {
+			fetch('api/productos.php')
+				.then(response => response.json())
+				.then(data => {
+					const loadingDiv = document.getElementById('productos-loading');
+					const containerDiv = document.getElementById('productos-container');
+					const noProductosDiv = document.getElementById('no-productos');
+
+					// Hide loading
+					loadingDiv.style.display = 'none';
+
+					if (data.success && data.productos.length > 0) {
+						// Show products
+						containerDiv.innerHTML = generateProductsHTML(data.productos);
+						noProductosDiv.style.display = 'none';
+
+						// Initialize modals after products are loaded
+						initializeModals(data.productos);
+					} else {
+						// Show no products message
+						containerDiv.innerHTML = '';
+						noProductosDiv.style.display = 'block';
+					}
+				})
+				.catch(error => {
+					console.error('Error loading products:', error);
+					const loadingDiv = document.getElementById('productos-loading');
+					const noProductosDiv = document.getElementById('no-productos');
+
+					loadingDiv.style.display = 'none';
+					noProductosDiv.style.display = 'block';
+					noProductosDiv.innerHTML = `
+						<i class="fa fa-exclamation-triangle fa-3x" style="color: #dc3545;"></i>
+						<h3 style="margin-top: 20px; color: #666;">Error al cargar productos</h3>
+						<p style="color: #999;">Por favor, recarga la página o contacta con nosotros.</p>
+					`;
+				});
+		}
+
+		// Function to generate products HTML
+		function generateProductsHTML(productos) {
+			let html = '';
+			let rowCount = 0;
+
+			productos.forEach((producto, index) => {
+				// Start new row every 2 products
+				if (index % 2 === 0) {
+					if (index > 0) html += '</div>'; // Close previous row
+					html += '<div class="row row-0-gutter">';
+					rowCount++;
+				}
+
+				html += `
+					<div class="col-md-6 col-0-gutter">
+						<div class="ot-portfolio-item">
+							<figure class="effect-bubba">
+								<img src="${producto.imagen}" alt="${producto.nombre}" class="img-responsive" />
+								<figcaption>
+									<h2>${producto.nombre}</h2>
+									<p>${producto.categoria} • $${parseInt(producto.precio).toLocaleString()} MXN</p>
+									<a href="#" data-toggle="modal" data-target="#Modal-${producto.id}" onclick="trackPortfolioView('${producto.nombre}')">Ver detalles</a>
+								</figcaption>
+							</figure>
+						</div>
+					</div>
+				`;
+			});
+
+			// Close last row
+			if (productos.length > 0) {
+				html += '</div>';
+			}
+
+			return html;
+		}
+
+		// Function to initialize modals for products
+		function initializeModals(productos) {
+			let modalsHTML = '';
+
+			productos.forEach(producto => {
+				const tamanosText = Array.isArray(producto.tamaños) ? producto.tamaños.join(', ') : producto.tamaños;
+				const whatsappMessage = encodeURIComponent(`Hola Elena, me interesa el perfume ${producto.nombre} ($${parseInt(producto.precio).toLocaleString()} MXN). ¿Podrías darme más información?`);
+
+				modalsHTML += `
+					<!-- Modal for ${producto.nombre} -->
+					<div class="modal fade" id="Modal-${producto.id}" tabindex="-1" role="dialog" aria-labelledby="Modal-label-${producto.id}">
+						<div class="modal-dialog modal-lg" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="Modal-label-${producto.id}">${producto.nombre}</h4>
+								</div>
+								<div class="modal-body">
+									<div class="row">
+										<div class="col-md-5">
+											<img src="${producto.imagen}" alt="${producto.nombre}" class="img-responsive perfume-modal-img" />
+											<div class="modal-works">
+												${producto.categoria.split(' ').map(word => `<span>${word}</span>`).join('')}
+											</div>
+											<div class="perfume-description">
+												<p>${producto.descripcion}</p>
+											</div>
+										</div>
+										<div class="col-md-7">
+											<div class="perfume-details">
+												<h5><strong>Precio: $${parseInt(producto.precio).toLocaleString()} MXN</strong></h5>
+												<div class="perfume-info-grid">
+													<div class="info-item">
+														<strong>Tamaños disponibles:</strong>
+														<span>${tamanosText}</span>
+													</div>
+													<div class="info-item">
+														<strong>Notas de salida:</strong>
+														<span>${producto.notas_salida}</span>
+													</div>
+													<div class="info-item">
+														<strong>Notas de corazón:</strong>
+														<span>${producto.notas_corazon}</span>
+													</div>
+													<div class="info-item">
+														<strong>Notas de fondo:</strong>
+														<span>${producto.notas_fondo}</span>
+													</div>
+													<div class="info-item">
+														<strong>Ocasión:</strong>
+														<span>${producto.ocasion}</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<a href="https://wa.me/525512345678?text=${whatsappMessage}" target="_blank" class="btn btn-primary">Consultar por WhatsApp</a>
+									<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+			});
+
+			// Remove existing modals and add new ones
+			const existingModals = document.querySelectorAll('.modal[id^="Modal-"]');
+			existingModals.forEach(modal => modal.remove());
+
+			// Add new modals to body
+			document.body.insertAdjacentHTML('beforeend', modalsHTML);
+		}
+
+		// Load products when page loads
+		document.addEventListener('DOMContentLoaded', function() {
+			loadProductos();
+		});
+		</script>
+
 		<script>
 			// Dark Mode Toggle
 			document.addEventListener('DOMContentLoaded', function() {
