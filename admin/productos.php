@@ -21,11 +21,11 @@ if ($_POST) {
             'categoria' => $_POST['categoria'],
             'descripcion' => $_POST['descripcion'],
             'imagen' => $_POST['imagen'] ?: 'images/demo/default.jpg',
-            'notas_salida' => $_POST['notas_salida'],
-            'notas_corazon' => $_POST['notas_corazon'],
-            'notas_fondo' => $_POST['notas_fondo'],
-            'tamaños' => explode(',', $_POST['tamanos']),
-            'ocasion' => $_POST['ocasion'],
+            'material' => $_POST['material'],
+            'tiempo_entrega' => $_POST['tiempo_entrega'],
+            'personalizacion' => $_POST['personalizacion'],
+            'peso_aproximado' => $_POST['peso_aproximado'],
+            'garantia' => $_POST['garantia'],
             'activo' => isset($_POST['activo']),
             'fecha_creacion' => date('Y-m-d')
         ];
@@ -50,11 +50,11 @@ if ($_POST) {
                 $producto['categoria'] = $_POST['categoria'];
                 $producto['descripcion'] = $_POST['descripcion'];
                 $producto['imagen'] = $_POST['imagen'] ?: $producto['imagen'];
-                $producto['notas_salida'] = $_POST['notas_salida'];
-                $producto['notas_corazon'] = $_POST['notas_corazon'];
-                $producto['notas_fondo'] = $_POST['notas_fondo'];
-                $producto['tamaños'] = explode(',', $_POST['tamanos']);
-                $producto['ocasion'] = $_POST['ocasion'];
+                $producto['material'] = $_POST['material'];
+                $producto['tiempo_entrega'] = $_POST['tiempo_entrega'];
+                $producto['personalizacion'] = $_POST['personalizacion'];
+                $producto['peso_aproximado'] = $_POST['peso_aproximado'];
+                $producto['garantia'] = $_POST['garantia'];
                 $producto['activo'] = isset($_POST['activo']);
                 break;
             }
@@ -260,20 +260,20 @@ showAdminHeader('Gestión de Productos');
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="mb-3">
-                                        <label class="form-label">Nombre del Producto *</label>
+                                        <label class="form-label">Nombre de la Joya *</label>
                                         <input type="text" name="nombre" class="form-control"
                                                value="<?= $producto ? htmlspecialchars($producto['nombre']) : '' ?>"
-                                               required placeholder="Ej: Chanel No. 5">
+                                               required placeholder="Ej: Anillo de Graduación Ingeniería">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label class="form-label">Precio (MXN) *</label>
+                                        <label class="form-label">Precio Base (MXN) *</label>
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
                                             <input type="number" name="precio" class="form-control"
                                                    value="<?= $producto ? $producto['precio'] : '' ?>"
-                                                   required placeholder="2850">
+                                                   required placeholder="850">
                                         </div>
                                     </div>
                                 </div>
@@ -283,17 +283,22 @@ showAdminHeader('Gestión de Productos');
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">Categoría *</label>
-                                        <input type="text" name="categoria" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['categoria']) : '' ?>"
-                                               required placeholder="Ej: Floral Clásico">
+                                        <select name="categoria" class="form-control" required>
+                                            <option value="">Seleccionar categoría...</option>
+                                            <option value="Anillos" <?= (!$producto || $producto['categoria'] === 'Anillos') ? 'selected' : '' ?>>Anillos</option>
+                                            <option value="Relojes" <?= ($producto && $producto['categoria'] === 'Relojes') ? 'selected' : '' ?>>Relojes</option>
+                                            <option value="Pulseras" <?= ($producto && $producto['categoria'] === 'Pulseras') ? 'selected' : '' ?>>Pulseras</option>
+                                            <option value="Collares" <?= ($producto && $producto['categoria'] === 'Collares') ? 'selected' : '' ?>>Collares</option>
+                                            <option value="Aretes" <?= ($producto && $producto['categoria'] === 'Aretes') ? 'selected' : '' ?>>Aretes</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Ocasión de Uso</label>
-                                        <input type="text" name="ocasion" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['ocasion']) : '' ?>"
-                                               placeholder="Ej: Diario, elegante, nocturno">
+                                        <label class="form-label">Material *</label>
+                                        <input type="text" name="material" class="form-control"
+                                               value="<?= $producto ? htmlspecialchars($producto['material']) : '' ?>"
+                                               required placeholder="Ej: Plata 925, Oro 14k">
                                     </div>
                                 </div>
                             </div>
@@ -301,7 +306,7 @@ showAdminHeader('Gestión de Productos');
                             <div class="mb-3">
                                 <label class="form-label">Descripción *</label>
                                 <textarea name="descripcion" class="form-control" rows="3" required
-                                          placeholder="Descripción detallada del perfume..."><?= $producto ? htmlspecialchars($producto['descripcion']) : '' ?></textarea>
+                                          placeholder="Descripción detallada de la joya, materiales, ocasión de uso..."><?= $producto ? htmlspecialchars($producto['descripcion']) : '' ?></textarea>
                             </div>
                         </div>
 
@@ -367,43 +372,56 @@ showAdminHeader('Gestión de Productos');
 
                         <hr>
 
-                        <!-- SECCIÓN 3: NOTAS OLFATIVAS -->
+                        <!-- SECCIÓN 3: DETALLES DE LA JOYA -->
                         <div class="mb-4">
                             <h5 class="text-primary mb-3">
-                                <i class="fas fa-leaf"></i> Notas Olfativas
+                                <i class="fas fa-gem"></i> Detalles de la Joya
                             </h5>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">
-                                            <i class="fas fa-arrow-up text-success"></i> Notas de Salida
+                                            <i class="fas fa-clock text-warning"></i> Tiempo de Entrega
                                         </label>
-                                        <input type="text" name="notas_salida" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['notas_salida']) : '' ?>"
-                                               placeholder="Bergamota, Limón">
-                                        <small class="text-muted">Primeras notas que se perciben</small>
+                                        <input type="text" name="tiempo_entrega" class="form-control"
+                                               value="<?= $producto ? htmlspecialchars($producto['tiempo_entrega']) : '' ?>"
+                                               placeholder="Ej: 7-10 días hábiles">
+                                        <small class="text-muted">Tiempo estimado de fabricación</small>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">
-                                            <i class="fas fa-heart text-danger"></i> Notas de Corazón
+                                            <i class="fas fa-weight text-info"></i> Peso Aproximado
                                         </label>
-                                        <input type="text" name="notas_corazon" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['notas_corazon']) : '' ?>"
-                                               placeholder="Rosa, Jazmín">
-                                        <small class="text-muted">Notas principales del perfume</small>
+                                        <input type="text" name="peso_aproximado" class="form-control"
+                                               value="<?= $producto ? htmlspecialchars($producto['peso_aproximado']) : '' ?>"
+                                               placeholder="Ej: 8-12 gramos">
+                                        <small class="text-muted">Peso estimado de la joya</small>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">
-                                            <i class="fas fa-arrow-down text-primary"></i> Notas de Fondo
+                                            <i class="fas fa-edit text-success"></i> Personalización Disponible
                                         </label>
-                                        <input type="text" name="notas_fondo" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['notas_fondo']) : '' ?>"
-                                               placeholder="Sándalo, Vainilla">
-                                        <small class="text-muted">Notas que perduran más tiempo</small>
+                                        <input type="text" name="personalizacion" class="form-control"
+                                               value="<?= $producto ? htmlspecialchars($producto['personalizacion']) : '' ?>"
+                                               placeholder="Ej: Grabado de nombres, fechas">
+                                        <small class="text-muted">Opciones de personalización</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            <i class="fas fa-shield-alt text-primary"></i> Garantía
+                                        </label>
+                                        <input type="text" name="garantia" class="form-control"
+                                               value="<?= $producto ? htmlspecialchars($producto['garantia']) : '' ?>"
+                                               placeholder="Ej: 6 meses contra defectos">
+                                        <small class="text-muted">Garantía ofrecida</small>
                                     </div>
                                 </div>
                             </div>
@@ -411,22 +429,13 @@ showAdminHeader('Gestión de Productos');
 
                         <hr>
 
-                        <!-- SECCIÓN 4: DETALLES ADICIONALES -->
+                        <!-- SECCIÓN 4: CONFIGURACIÓN -->
                         <div class="mb-4">
                             <h5 class="text-primary mb-3">
-                                <i class="fas fa-cog"></i> Detalles Adicionales
+                                <i class="fas fa-cog"></i> Configuración
                             </h5>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Tamaños Disponibles</label>
-                                        <input type="text" name="tamanos" class="form-control"
-                                               value="<?= $producto ? implode(',', $producto['tamaños']) : '' ?>"
-                                               placeholder="50ml, 100ml">
-                                        <small class="text-muted">Separar con comas (ej: 50ml, 100ml)</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="mb-3">
                                         <label class="form-label">Estado del Producto</label>
                                         <div class="form-check form-switch">

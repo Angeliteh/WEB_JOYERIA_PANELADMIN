@@ -38,10 +38,10 @@ showAdminHeader('Dashboard');
         <div class="card text-center">
             <div class="card-body">
                 <div class="display-4 text-primary mb-2">
-                    <i class="fas fa-spray-can"></i>
+                    <i class="fas fa-gem"></i>
                 </div>
                 <h3 class="card-title"><?= $totalProductos ?></h3>
-                <p class="card-text text-muted">Total Productos</p>
+                <p class="card-text text-muted">Total Joyas</p>
             </div>
         </div>
     </div>
@@ -53,11 +53,11 @@ showAdminHeader('Dashboard');
                     <i class="fas fa-eye"></i>
                 </div>
                 <h3 class="card-title"><?= $productosActivos ?></h3>
-                <p class="card-text text-muted">Productos Activos</p>
+                <p class="card-text text-muted">Joyas Activas</p>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card text-center">
             <div class="card-body">
@@ -65,7 +65,7 @@ showAdminHeader('Dashboard');
                     <i class="fas fa-eye-slash"></i>
                 </div>
                 <h3 class="card-title"><?= $productosInactivos ?></h3>
-                <p class="card-text text-muted">Productos Inactivos</p>
+                <p class="card-text text-muted">Joyas Inactivas</p>
             </div>
         </div>
     </div>
@@ -95,13 +95,13 @@ showAdminHeader('Dashboard');
                     <div class="col-md-4 mb-3">
                         <a href="productos.php?action=add" class="btn btn-primary btn-lg w-100">
                             <i class="fas fa-plus"></i><br>
-                            Agregar Producto
+                            Agregar Joya
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
                         <a href="productos.php" class="btn btn-outline-primary btn-lg w-100">
                             <i class="fas fa-list"></i><br>
-                            Ver Todos los Productos
+                            Ver Todas las Joyas
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
