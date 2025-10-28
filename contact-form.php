@@ -5,7 +5,7 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Configuración
-$to_email = "betitopanchito214@gmail.com"; // Email de prueba
+$to_email = "danielillocontreras@gmail.com"; // Email del cliente
 $subject_prefix = "[Joyería Matt] Nuevo mensaje de contacto";
 
 // Función para limpiar datos

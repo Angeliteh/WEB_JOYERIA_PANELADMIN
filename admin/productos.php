@@ -285,11 +285,11 @@ showAdminHeader('Gestión de Productos');
                                         <label class="form-label">Categoría *</label>
                                         <select name="categoria" class="form-control" required>
                                             <option value="">Seleccionar categoría...</option>
-                                            <option value="Anillos" <?= (!$producto || $producto['categoria'] === 'Anillos') ? 'selected' : '' ?>>Anillos</option>
+                                            <option value="Anillos de Graduación" <?= (!$producto || $producto['categoria'] === 'Anillos de Graduación') ? 'selected' : '' ?>>Anillos de Graduación</option>
+                                            <option value="Anillos de Compromiso" <?= ($producto && $producto['categoria'] === 'Anillos de Compromiso') ? 'selected' : '' ?>>Anillos de Compromiso</option>
+                                            <option value="Argollas Matrimoniales" <?= ($producto && $producto['categoria'] === 'Argollas Matrimoniales') ? 'selected' : '' ?>>Argollas Matrimoniales</option>
                                             <option value="Relojes" <?= ($producto && $producto['categoria'] === 'Relojes') ? 'selected' : '' ?>>Relojes</option>
-                                            <option value="Pulseras" <?= ($producto && $producto['categoria'] === 'Pulseras') ? 'selected' : '' ?>>Pulseras</option>
-                                            <option value="Collares" <?= ($producto && $producto['categoria'] === 'Collares') ? 'selected' : '' ?>>Collares</option>
-                                            <option value="Aretes" <?= ($producto && $producto['categoria'] === 'Aretes') ? 'selected' : '' ?>>Aretes</option>
+                                            <option value="Carátulas" <?= ($producto && $producto['categoria'] === 'Carátulas') ? 'selected' : '' ?>>Carátulas</option>
                                         </select>
                                     </div>
                                 </div>
