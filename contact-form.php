@@ -5,8 +5,8 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Configuración
-$to_email = "hola@pixelstudio.es"; // Cambiar por el email real
-$subject_prefix = "[Pixel Studio] Nuevo mensaje de contacto";
+$to_email = "betitopanchito214@gmail.com"; // Email de prueba
+$subject_prefix = "[Joyería Matt] Nuevo mensaje de contacto";
 
 // Función para limpiar datos
 function clean_input($data) {
@@ -64,7 +64,7 @@ if (!empty($errors)) {
 // Preparar el email
 $subject = $subject_prefix . " - " . $name;
 $email_body = "
-Nuevo mensaje de contacto desde Pixel Studio
+Nuevo mensaje de contacto desde Joyería Matt
 
 Nombre: $name
 Email: $email
@@ -74,7 +74,7 @@ Mensaje:
 $message
 
 ---
-Este mensaje fue enviado desde el formulario de contacto de pixelstudio.es
+Este mensaje fue enviado desde el formulario de contacto de joyeriamatt.com
 ";
 
 $headers = "From: $email\r\n";
