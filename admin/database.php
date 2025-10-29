@@ -172,12 +172,12 @@ function createProducto($data) {
     $conn = getDBConnection();
     
     $query = "INSERT INTO productos (nombre, precio, categoria, descripcion, imagen, 
-              material, tiempo_entrega, personalizacion, peso_aproximado, garantia, activo) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+              material, tiempo_entrega, personalizacion, garantia, activo) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($query);
     $stmt->bind_param(
-        "sdssssssssi",
+        "sdsssssssi",
         $data['nombre'],
         $data['precio'],
         $data['categoria'],
@@ -186,7 +186,6 @@ function createProducto($data) {
         $data['material'],
         $data['tiempo_entrega'],
         $data['personalizacion'],
-        $data['peso_aproximado'],
         $data['garantia'],
         $data['activo']
     );
@@ -207,12 +206,12 @@ function updateProducto($id, $data) {
     $query = "UPDATE productos SET 
               nombre = ?, precio = ?, categoria = ?, descripcion = ?, 
               imagen = ?, material = ?, tiempo_entrega = ?, personalizacion = ?, 
-              peso_aproximado = ?, garantia = ?, activo = ?
+              garantia = ?, activo = ?
               WHERE id = ?";
     
     $stmt = $conn->prepare($query);
     $stmt->bind_param(
-        "sdssssssssii",
+        "sdsssssssii",
         $data['nombre'],
         $data['precio'],
         $data['categoria'],
@@ -221,7 +220,6 @@ function updateProducto($id, $data) {
         $data['material'],
         $data['tiempo_entrega'],
         $data['personalizacion'],
-        $data['peso_aproximado'],
         $data['garantia'],
         $data['activo'],
         $id

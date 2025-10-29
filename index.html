@@ -379,17 +379,38 @@
 				<div class="col-lg-12 text-center">
 					<div class="category-filters">
 						<button class="category-btn active" data-category="all">
-						<i class="fa fa-th"></i> Todas las Joyas
-					</button>
-					<button class="category-btn" data-category="Anillos de Graduación">
-						<i class="fa fa-graduation-cap"></i> Anillos de Graduación
-					</button>
-					<button class="category-btn" data-category="Anillos de Compromiso">
-						<i class="fa fa-heart"></i> Anillos de Compromiso
-					</button>
-					<button class="category-btn" data-category="Argollas Matrimoniales">
-						<i class="fa fa-ring"></i> Argollas Matrimoniales
-					</button>
+							<i class="fa fa-th"></i> Todas las Joyas
+						</button>
+						<button class="category-btn" data-category="Anillos de Graduación">
+							<i class="fa fa-graduation-cap"></i> Anillos de Graduación
+						</button>
+						<button class="category-btn" data-category="Anillos de XV Años">
+							<i class="fa fa-birthday-cake"></i> Anillos de XV Años
+						</button>
+						<button class="category-btn" data-category="Anillos de Compromiso">
+							<i class="fa fa-heart"></i> Anillos de Compromiso
+						</button>
+						<button class="category-btn" data-category="Argollas Matrimoniales">
+							<i class="fa fa-ring"></i> Argollas Matrimoniales
+						</button>
+						<button class="category-btn" data-category="Medallas Conmemorativas">
+							<i class="fa fa-trophy"></i> Medallas Conmemorativas
+						</button>
+						<button class="category-btn" data-category="Pulseras y Cadenas Dama">
+							<i class="fa fa-female"></i> Pulseras y Cadenas Dama
+						</button>
+						<button class="category-btn" data-category="Pulseras y Cadenas Caballero">
+							<i class="fa fa-male"></i> Pulseras y Cadenas Caballero
+						</button>
+						<button class="category-btn" data-category="Dijes Dama">
+							<i class="fa fa-heart-o"></i> Dijes Dama
+						</button>
+						<button class="category-btn" data-category="Dijes Caballero">
+							<i class="fa fa-shield"></i> Dijes Caballero
+						</button>
+						<button class="category-btn" data-category="Joyería Temática">
+							<i class="fa fa-star"></i> Joyería Temática
+						</button>
 					</div>
 				</div>
 			</div>
@@ -735,7 +756,7 @@
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<input type="email" class="form-control" placeholder="Tu Email *" name="email" id="email" required>
+										<input type="email" class="form-control" placeholder="Tu Email (opcional)" name="email" id="email">
 										<p class="help-block text-danger" id="email-error"></p>
 									</div>
 								</div>
@@ -743,17 +764,25 @@
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
-										<input type="tel" class="form-control" placeholder="Tu Teléfono *" name="phone" id="phone" required>
+										<input type="tel" class="form-control" placeholder="Tu Teléfono con WhatsApp *" name="phone" id="phone" required>
 										<p class="help-block text-danger" id="phone-error"></p>
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<select class="form-control" name="jewelry_type" id="jewelry_type" required>
-											<option value="">Tipo de Joya *</option>
+										<label for="jewelry_type" class="sr-only">Tipo de Joya</label>
+										<select class="form-control" name="jewelry_type" id="jewelry_type" required aria-label="Tipo de Joya">
+											<option value="" disabled selected hidden>Tipo de Joya *</option>
 											<option value="Anillos de Graduación">Anillos de Graduación</option>
+											<option value="Anillos de XV Años">Anillos de XV Años</option>
 											<option value="Anillos de Compromiso">Anillos de Compromiso</option>
 											<option value="Argollas Matrimoniales">Argollas Matrimoniales</option>
+											<option value="Medallas Conmemorativas">Medallas Conmemorativas</option>
+											<option value="Pulseras y Cadenas Dama">Pulseras y Cadenas Dama</option>
+											<option value="Pulseras y Cadenas Caballero">Pulseras y Cadenas Caballero</option>
+											<option value="Dijes Dama">Dijes Dama</option>
+											<option value="Dijes Caballero">Dijes Caballero</option>
+											<option value="Joyería Temática">Joyería Temática</option>
 											<option value="Otro">Otro</option>
 										</select>
 										<p class="help-block text-danger" id="jewelry_type-error"></p>
@@ -763,7 +792,7 @@
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Texto a grabar (opcional)" name="engraving" id="engraving" maxlength="100">
+										<input type="text" class="form-control" placeholder="Texto simplificado a grabar (opcional)" name="engraving" id="engraving" maxlength="100">
 										<p class="help-block text-danger" id="engraving-error"></p>
 									</div>
 								</div>
@@ -771,11 +800,28 @@
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
-										<label for="design_file" style="display: block; text-align: left; margin-bottom: 5px; color: #666;">
-											<i class="fa fa-upload"></i> Subir imagen/logo/diseño (opcional)
+										<label style="display: block; text-align: left; margin-bottom: 10px; color: #666; font-weight: 600;">
+											<i class="fa fa-upload"></i> Subir imágenes de referencia (opcional - hasta 3 imágenes)
 										</label>
-										<input type="file" class="form-control" name="design_file" id="design_file" accept="image/*,.pdf">
-										<small class="text-muted">Formatos: JPG, PNG, PDF | Máximo: 5MB</small>
+										<div style="margin-bottom: 10px;">
+											<label for="design_file_1" style="display: block; font-size: 14px; color: #888; margin-bottom: 5px;">
+												📷 Imagen 1: Vista lateral izquierda
+											</label>
+											<input type="file" class="form-control" name="design_file_1" id="design_file_1" accept="image/*">
+										</div>
+										<div style="margin-bottom: 10px;">
+											<label for="design_file_2" style="display: block; font-size: 14px; color: #888; margin-bottom: 5px;">
+												📷 Imagen 2: Vista superior
+											</label>
+											<input type="file" class="form-control" name="design_file_2" id="design_file_2" accept="image/*">
+										</div>
+										<div style="margin-bottom: 10px;">
+											<label for="design_file_3" style="display: block; font-size: 14px; color: #888; margin-bottom: 5px;">
+												📷 Imagen 3: Vista lateral derecha
+											</label>
+											<input type="file" class="form-control" name="design_file_3" id="design_file_3" accept="image/*">
+										</div>
+										<small class="text-muted">Formatos: JPG, PNG | Máximo: 5MB por imagen</small>
 										<p class="help-block text-danger" id="design_file-error"></p>
 									</div>
 								</div>
@@ -869,8 +915,8 @@
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<label>Material Preferido</label>
-										<select class="form-control" name="material">
+										<label for="modal_material">Material Preferido</label>
+										<select class="form-control" name="material" id="modal_material" aria-label="Material Preferido">
 											<option value="">Seleccionar...</option>
 											<option value="Plata 925">Plata 925</option>
 											<option value="Oro 10k">Oro 10k</option>
@@ -1063,10 +1109,6 @@
 													<div class="info-item">
 														<strong>Personalización:</strong>
 														<span>${producto.personalizacion}</span>
-													</div>
-													<div class="info-item">
-														<strong>Peso aproximado:</strong>
-														<span>${producto.peso_aproximado}</span>
 													</div>
 													<div class="info-item">
 														<strong>Garantía:</strong>

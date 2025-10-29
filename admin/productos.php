@@ -77,7 +77,6 @@ if ($_POST) {
                 'material' => $_POST['material'],
                 'tiempo_entrega' => $_POST['tiempo_entrega'],
                 'personalizacion' => $_POST['personalizacion'],
-                'peso_aproximado' => $_POST['peso_aproximado'],
                 'garantia' => $_POST['garantia'],
                 'activo' => isset($_POST['activo']) ? 1 : 0
             ];
@@ -101,7 +100,6 @@ if ($_POST) {
                 'material' => $_POST['material'],
                 'tiempo_entrega' => $_POST['tiempo_entrega'],
                 'personalizacion' => $_POST['personalizacion'],
-                'peso_aproximado' => $_POST['peso_aproximado'],
                 'garantia' => $_POST['garantia'],
                 'activo' => isset($_POST['activo']) ? 1 : 0
             ];
@@ -431,11 +429,32 @@ if ($action === 'list') {
                                 <option value="Anillos de Graduación" <?php echo ($productoEditar['categoria'] ?? '') === 'Anillos de Graduación' ? 'selected' : ''; ?>>
                                     Anillos de Graduación
                                 </option>
+                                <option value="Anillos de XV Años" <?php echo ($productoEditar['categoria'] ?? '') === 'Anillos de XV Años' ? 'selected' : ''; ?>>
+                                    Anillos de XV Años
+                                </option>
                                 <option value="Anillos de Compromiso" <?php echo ($productoEditar['categoria'] ?? '') === 'Anillos de Compromiso' ? 'selected' : ''; ?>>
                                     Anillos de Compromiso
                                 </option>
                                 <option value="Argollas Matrimoniales" <?php echo ($productoEditar['categoria'] ?? '') === 'Argollas Matrimoniales' ? 'selected' : ''; ?>>
                                     Argollas Matrimoniales
+                                </option>
+                                <option value="Medallas Conmemorativas" <?php echo ($productoEditar['categoria'] ?? '') === 'Medallas Conmemorativas' ? 'selected' : ''; ?>>
+                                    Medallas Conmemorativas
+                                </option>
+                                <option value="Pulseras y Cadenas Dama" <?php echo ($productoEditar['categoria'] ?? '') === 'Pulseras y Cadenas Dama' ? 'selected' : ''; ?>>
+                                    Pulseras y Cadenas Dama
+                                </option>
+                                <option value="Pulseras y Cadenas Caballero" <?php echo ($productoEditar['categoria'] ?? '') === 'Pulseras y Cadenas Caballero' ? 'selected' : ''; ?>>
+                                    Pulseras y Cadenas Caballero
+                                </option>
+                                <option value="Dijes Dama" <?php echo ($productoEditar['categoria'] ?? '') === 'Dijes Dama' ? 'selected' : ''; ?>>
+                                    Dijes Dama
+                                </option>
+                                <option value="Dijes Caballero" <?php echo ($productoEditar['categoria'] ?? '') === 'Dijes Caballero' ? 'selected' : ''; ?>>
+                                    Dijes Caballero
+                                </option>
+                                <option value="Joyería Temática" <?php echo ($productoEditar['categoria'] ?? '') === 'Joyería Temática' ? 'selected' : ''; ?>>
+                                    Joyería Temática
                                 </option>
                             </select>
                         </div>
@@ -527,16 +546,6 @@ if ($action === 'list') {
                                    name="personalizacion" 
                                    value="<?php echo $productoEditar['personalizacion'] ?? ''; ?>" 
                                    placeholder="Ej: Grabado de nombre y fecha">
-                        </div>
-
-                        <!-- Peso Aproximado -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Peso Aproximado</label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   name="peso_aproximado" 
-                                   value="<?php echo $productoEditar['peso_aproximado'] ?? ''; ?>" 
-                                   placeholder="Ej: 8-12 gramos">
                         </div>
 
                         <!-- Garantía -->
