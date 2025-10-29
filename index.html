@@ -754,8 +754,6 @@
 											<option value="Anillos de Graduación">Anillos de Graduación</option>
 											<option value="Anillos de Compromiso">Anillos de Compromiso</option>
 											<option value="Argollas Matrimoniales">Argollas Matrimoniales</option>
-											<option value="Relojes">Relojes</option>
-											<option value="Carátulas">Carátulas</option>
 											<option value="Otro">Otro</option>
 										</select>
 										<p class="help-block text-danger" id="jewelry_type-error"></p>
@@ -1165,13 +1163,19 @@
 
 		// Function to open custom form modal
 		function openCustomForm(productId, productName, productCategory) {
-			// Fill form with product data
-			document.getElementById('base_product_id').value = productId;
-			document.getElementById('modal_base_product').value = productName;
-			document.getElementById('modal_jewelry_type').value = productCategory;
+			// Close product modal first
+			$('.modal').modal('hide');
+			
+			// Wait for modal to close, then open custom form
+			setTimeout(function() {
+				// Fill form with product data
+				document.getElementById('base_product_id').value = productId;
+				document.getElementById('modal_base_product').value = productName;
+				document.getElementById('modal_jewelry_type').value = productCategory;
 
-			// Open modal
-			$('#customFormModal').modal('show');
+				// Open custom form modal
+				$('#customFormModal').modal('show');
+			}, 300);
 		}
 		</script>
 
@@ -1337,6 +1341,75 @@
 					const errorElements = document.querySelectorAll('.help-block');
 					errorElements.forEach(el => el.textContent = '');
 					formMessages.style.display = 'none';
+				}
+
+				// Custom Jewelry Form Handler (Modal)
+				const customJewelryForm = document.getElementById('customJewelryForm');
+				
+				if (customJewelryForm) {
+					customJewelryForm.addEventListener('submit', function(e) {
+						e.preventDefault();
+						
+						const submitButton = this.querySelector('button[type="submit"]');
+						const originalText = submitButton.innerHTML;
+						submitButton.disabled = true;
+						submitButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Enviando...';
+						
+						// Get form data
+						const formData = new FormData(customJewelryForm);
+						
+						// Convertir a formato para la API
+						const apiData = new FormData();
+						apiData.append('nombre', formData.get('name'));
+						apiData.append('email', formData.get('email'));
+						apiData.append('telefono', formData.get('phone'));
+						apiData.append('producto_id', formData.get('base_product_id'));
+						
+						// Construir mensaje completo
+						let mensaje = formData.get('message') || '';
+						mensaje += '\n\n--- Detalles de Personalización ---';
+						mensaje += '\nJoya base: ' + (formData.get('base_product') || 'No especificado');
+						mensaje += '\nTipo: ' + (formData.get('jewelry_type') || 'No especificado');
+						if (formData.get('material')) {
+							mensaje += '\nMaterial preferido: ' + formData.get('material');
+						}
+						if (formData.get('engraving')) {
+							mensaje += '\nTexto a grabar: ' + formData.get('engraving');
+						}
+						
+						apiData.append('mensaje', mensaje);
+						apiData.append('tipo', 'cotizacion');
+						
+						// Send AJAX request
+						fetch('api/solicitud.php', {
+							method: 'POST',
+							body: apiData
+						})
+						.then(response => response.json())
+						.then(data => {
+							if (data.success) {
+								// Success
+								alert('✅ Solicitud enviada. Redirigiendo a WhatsApp...');
+								customJewelryForm.reset();
+								$('#customFormModal').modal('hide');
+								
+								// Redirigir a WhatsApp
+								setTimeout(() => {
+									window.open(data.whatsapp_url, '_blank');
+								}, 500);
+							} else {
+								alert('❌ Error: ' + (data.error || 'No se pudo enviar la solicitud'));
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+							alert('❌ Error de conexión. Por favor, inténtalo de nuevo.');
+						})
+						.finally(() => {
+							submitButton.disabled = false;
+							submitButton.innerHTML = originalText;
+						});
+					});
 				}
 
 				// Cookie Consent Management

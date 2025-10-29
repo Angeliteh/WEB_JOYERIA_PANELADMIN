@@ -91,11 +91,6 @@ function showAdminHeader($pageTitle = 'Panel de Administración') {
                                 <i class="fas fa-envelope-open-text"></i> Solicitudes
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="gestor-imagenes.php">
-                                <i class="fas fa-images"></i> Imágenes
-                            </a>
-                        </li>
                     </ul>
                     
                     <ul class="navbar-nav">

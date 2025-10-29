@@ -11,7 +11,7 @@ Import Google Fonts
 --------------------*/
 
 /* main font for menu. */
-@import url(http://fonts.googleapis.com/css?family=Roboto:400|Raleway:200,300,400,500,700,900);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400|Raleway:200,300,400,500,700,900);
 
 /*--------------------
 CSS Variables for Dark Mode
@@ -2162,7 +2162,7 @@ New Centered Hero Design
 }
 
 .hero-description-center {
-	font-size: 1.3rem;
+	font-size: 1.5rem;
 	line-height: 1.8;
 	color: var(--text-color);
 	max-width: 800px;
@@ -2207,14 +2207,14 @@ New Centered Hero Design
 }
 
 .feature-box h4 {
-	font-size: 1.4rem;
+	font-size: 1.6rem;
 	font-weight: 600;
 	color: var(--heading-color);
 	margin-bottom: 10px;
 }
 
 .feature-box p {
-	font-size: 1.1rem;
+	font-size: 1.2rem;
 	color: var(--text-color);
 	opacity: 0.8;
 	margin: 0;
@@ -2291,16 +2291,15 @@ New Centered Hero Design
 }
 
 .stat-box .stat-number {
-	font-size: 3rem;
+	font-size: 3.5rem;
 	font-weight: 700;
 	color: var(--primary-color);
-	display: block;
 	line-height: 1;
 	margin-bottom: 10px;
 }
 
 .stat-box .stat-label {
-	font-size: 1.1rem;
+	font-size: 1.2rem;
 	color: var(--text-color);
 	opacity: 0.8;
 	font-weight: 500;
@@ -2422,7 +2421,7 @@ Responsive Hero Section
 	}
 
 	.hero-description-center {
-		font-size: 1.1rem;
+		font-size: 1.3rem;
 	}
 
 	.hero-features {
@@ -2440,11 +2439,11 @@ Responsive Hero Section
 	}
 
 	.feature-box h4 {
-		font-size: 1.2rem;
+		font-size: 1.4rem;
 	}
 
 	.feature-box p {
-		font-size: 1rem;
+		font-size: 1.1rem;
 	}
 
 	.hero-cta-buttons {
@@ -2604,7 +2603,7 @@ Responsive Hero Section
 	}
 
 	.hero-description-center {
-		font-size: 1rem;
+		font-size: 1.15rem;
 		line-height: 1.6;
 	}
 
@@ -2622,11 +2621,11 @@ Responsive Hero Section
 	}
 
 	.feature-box h4 {
-		font-size: 1.1rem;
+		font-size: 1.25rem;
 	}
 
 	.feature-box p {
-		font-size: 0.95rem;
+		font-size: 1.05rem;
 	}
 
 	.hero-btn-main,
@@ -2767,7 +2766,7 @@ Brand Text Logo
 }
 
 .navbar-logo {
-	height: 50px;
+	height: 30px;
 	width: auto;
 	border-radius: 8px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -3485,15 +3484,15 @@ Info Section
 }
 
 .info-icon {
-	width: 80px;
-	height: 80px;
+	width: 90px;
+	height: 90px;
 	margin: 0 auto 25px;
 	background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 2.5rem;
+	font-size: 3rem;
 	color: white;
 	transition: all 0.3s ease;
 }
@@ -3504,14 +3503,14 @@ Info Section
 
 .info-card h3 {
 	color: var(--heading-color);
-	font-size: 1.5rem;
+	font-size: 1.8rem;
 	font-weight: 700;
 	margin-bottom: 15px;
 }
 
 .info-card p {
 	color: var(--text-color);
-	font-size: 1.05rem;
+	font-size: 1.2rem;
 	line-height: 1.7;
 	margin: 0;
 }
@@ -3533,9 +3532,9 @@ Info Section
 }
 
 .contact-item i {
-	font-size: 2.5rem;
+	font-size: 3rem;
 	color: var(--primary-color);
-	min-width: 50px;
+	min-width: 60px;
 }
 
 .contact-details {
@@ -3544,14 +3543,14 @@ Info Section
 
 .contact-details h4 {
 	color: var(--heading-color);
-	font-size: 1.2rem;
+	font-size: 1.5rem;
 	font-weight: 600;
 	margin: 0 0 5px 0;
 }
 
 .contact-details p {
 	color: var(--text-color);
-	font-size: 1.1rem;
+	font-size: 1.25rem;
 	margin: 0;
 }
 
@@ -3585,13 +3584,17 @@ Info Section
 	}
 
 	.info-icon {
-		width: 70px;
-		height: 70px;
-		font-size: 2rem;
+		width: 80px;
+		height: 80px;
+		font-size: 2.5rem;
 	}
 
 	.info-card h3 {
-		font-size: 1.3rem;
+		font-size: 1.5rem;
+	}
+
+	.info-card p {
+		font-size: 1.1rem;
 	}
 
 	.contact-info-box {
@@ -3608,8 +3611,16 @@ Info Section
 		text-align: center;
 	}
 
+	.contact-details h4 {
+		font-size: 1.3rem;
+	}
+
+	.contact-details p {
+		font-size: 1.15rem;
+	}
+
 	.contact-item i {
-		font-size: 2rem;
+		font-size: 2.5rem;
 	}
 }
 

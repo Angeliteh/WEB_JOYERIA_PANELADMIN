@@ -7,24 +7,34 @@ require_once 'auth.php';
 require_once 'database.php';
 
 // Obtener todas las solicitudes
-$conn = getConnection();
-$sql = "SELECT * FROM solicitudes ORDER BY fecha_creacion DESC";
-$result = $conn->query($sql);
-$solicitudes = [];
-
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $solicitudes[] = $row;
+try {
+    $conn = getDBConnection();
+    $sql = "SELECT * FROM solicitudes ORDER BY fecha_solicitud DESC";
+    $result = $conn->query($sql);
+    $solicitudes = [];
+    
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $solicitudes[] = $row;
+        }
     }
+} catch (Exception $e) {
+    $solicitudes = [];
+    $error = $e->getMessage();
 }
-
-$conn->close();
 
 // Mostrar header
 showAdminHeader('Solicitudes de Clientes');
 ?>
 
 <div class="container mt-4">
+    <?php if (isset($error)): ?>
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            Error al cargar solicitudes: <?php echo htmlspecialchars($error); ?>
+        </div>
+    <?php endif; ?>
+    
     <div class="card">
         <div class="card-header">
             <h4 class="mb-0">
@@ -59,8 +69,8 @@ showAdminHeader('Solicitudes de Clientes');
                                 <td><?php echo $solicitud['id']; ?></td>
                                 <td>
                                     <small>
-                                        <?php echo date('d/m/Y', strtotime($solicitud['fecha_creacion'])); ?><br>
-                                        <?php echo date('H:i', strtotime($solicitud['fecha_creacion'])); ?>
+                                        <?php echo date('d/m/Y', strtotime($solicitud['fecha_solicitud'])); ?><br>
+                                        <?php echo date('H:i', strtotime($solicitud['fecha_solicitud'])); ?>
                                     </small>
                                 </td>
                                 <td>
@@ -83,10 +93,10 @@ showAdminHeader('Solicitudes de Clientes');
                                         'cotizacion' => 'info',
                                         'personalizado' => 'primary'
                                     ];
-                                    $badge = $badges[$solicitud['tipo']] ?? 'secondary';
+                                    $badge = $badges[$solicitud['estado']] ?? 'secondary';
                                     ?>
                                     <span class="badge bg-<?php echo $badge; ?>">
-                                        <?php echo ucfirst($solicitud['tipo']); ?>
+                                        <?php echo ucfirst($solicitud['estado']); ?>
                                     </span>
                                 </td>
                                 <td>
@@ -144,8 +154,8 @@ showAdminHeader('Solicitudes de Clientes');
                     <strong>Cliente:</strong> ${solicitud.nombre}<br>
                     ${solicitud.email ? `<strong>Email:</strong> ${solicitud.email}<br>` : ''}
                     ${solicitud.telefono ? `<strong>Teléfono:</strong> ${solicitud.telefono}<br>` : ''}
-                    <strong>Tipo:</strong> ${solicitud.tipo}<br>
-                    <strong>Fecha:</strong> ${new Date(solicitud.fecha_creacion).toLocaleString('es-MX')}
+                    <strong>Tipo:</strong> ${solicitud.tipo_joya}<br>
+                    <strong>Fecha:</strong> ${new Date(solicitud.fecha_solicitud).toLocaleString('es-MX')}
                 </div>
                 <div class="alert alert-light">
                     <strong>Mensaje:</strong><br>

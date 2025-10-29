@@ -18,7 +18,7 @@ define('DB_NAME_LOCAL', 'joyeria_matt');
 
 // Para PRODUCCIÓN (InfinityFree)
 // CREDENCIALES CONFIGURADAS
-define('DB_HOST_PROD', 'sql200.infinityfree.com');  // Host de InfinityFree
+define('DB_HOST_PROD', 'sql303.infinityfree.com');  // Host de InfinityFree
 define('DB_USER_PROD', 'if0_40271876');             // Usuario MySQL
 define('DB_PASS_PROD', 'betito4321');               // Contraseña MySQL
 define('DB_NAME_PROD', 'if0_40271876_joyeria');     // Base de datos
@@ -70,6 +70,11 @@ function getDBConnection() {
     }
     
     return $conn;
+}
+
+// Alias para compatibilidad
+function getConnection() {
+    return getDBConnection();
 }
 
 // ============================================

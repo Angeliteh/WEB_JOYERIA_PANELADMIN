@@ -54,10 +54,9 @@ try {
         email, 
         telefono, 
         mensaje, 
-        tipo, 
-        producto_id,
-        fecha_creacion
-    ) VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        tipo_joya, 
+        producto_base_id
+    ) VALUES (?, ?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param(
