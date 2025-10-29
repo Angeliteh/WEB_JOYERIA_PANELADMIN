@@ -379,23 +379,17 @@
 				<div class="col-lg-12 text-center">
 					<div class="category-filters">
 						<button class="category-btn active" data-category="all">
-							<i class="fa fa-th"></i> Todas las Joyas
-						</button>
-						<button class="category-btn" data-category="Anillos de Graduación">
-							<i class="fa fa-graduation-cap"></i> Anillos de Graduación
-						</button>
-						<button class="category-btn" data-category="Anillos de Compromiso">
-							<i class="fa fa-heart"></i> Anillos de Compromiso
-						</button>
-						<button class="category-btn" data-category="Argollas Matrimoniales">
-							<i class="fa fa-ring"></i> Argollas Matrimoniales
-						</button>
-						<button class="category-btn" data-category="Relojes">
-							<i class="fa fa-clock-o"></i> Relojes
-						</button>
-						<button class="category-btn" data-category="Carátulas">
-							<i class="fa fa-circle-o"></i> Carátulas
-						</button>
+						<i class="fa fa-th"></i> Todas las Joyas
+					</button>
+					<button class="category-btn" data-category="Anillos de Graduación">
+						<i class="fa fa-graduation-cap"></i> Anillos de Graduación
+					</button>
+					<button class="category-btn" data-category="Anillos de Compromiso">
+						<i class="fa fa-heart"></i> Anillos de Compromiso
+					</button>
+					<button class="category-btn" data-category="Argollas Matrimoniales">
+						<i class="fa fa-ring"></i> Argollas Matrimoniales
+					</button>
 					</div>
 				</div>
 			</div>
@@ -946,6 +940,9 @@
 
 		<!-- Dynamic Products Loading Script -->
 		<script>
+		// Variable global para almacenar todos los productos
+		let todosLosProductos = [];
+
 		// Function to load products dynamically
 		function loadProductos() {
 			fetch('api/productos.php')
@@ -959,6 +956,9 @@
 					loadingDiv.style.display = 'none';
 
 					if (data.success && data.productos.length > 0) {
+						// Guardar productos en variable global
+						todosLosProductos = data.productos;
+						
 						// Show products
 						containerDiv.innerHTML = generateProductsHTML(data.productos);
 						noProductosDiv.style.display = 'none';
@@ -1128,54 +1128,39 @@
 		}
 
 		function filterProductsByCategory(category) {
-			const productItems = document.querySelectorAll('.ot-portfolio-item');
 			const container = document.getElementById('productos-container');
+			const noProductosDiv = document.getElementById('no-productos');
 			
-			// Ocultar todos primero
-			productItems.forEach(item => {
-				const productCategory = item.getAttribute('data-category');
-				const parentCol = item.parentElement;
-				
-				if (category === 'all' || productCategory === category) {
-					parentCol.style.display = '';
-					parentCol.classList.remove('hidden-product');
-				} else {
-					parentCol.style.display = 'none';
-					parentCol.classList.add('hidden-product');
-				}
-			});
+			if (!container) return;
 			
-			// Reorganizar el grid para eliminar espacios
-			const visibleItems = Array.from(productItems).filter(item => {
-				return category === 'all' || item.getAttribute('data-category') === category;
-			});
-			
-			// Limpiar y reconstruir el contenedor
-			if (container) {
-				const rows = [];
-				let currentRow = [];
-				
-				visibleItems.forEach((item, index) => {
-					currentRow.push(item.parentElement.cloneNode(true));
-					
-					// Cada 2 elementos crear una nueva fila (grid de 2 columnas)
-					if ((index + 1) % 2 === 0 || index === visibleItems.length - 1) {
-						const row = document.createElement('div');
-						row.className = 'row row-0-gutter';
-						currentRow.forEach(col => {
-							col.style.display = '';
-							col.classList.remove('hidden-product');
-							row.appendChild(col);
-						});
-						rows.push(row);
-						currentRow = [];
-					}
-				});
-				
-				// Limpiar contenedor y agregar nuevas filas
-				container.innerHTML = '';
-				rows.forEach(row => container.appendChild(row));
+			// Filtrar productos desde el array original
+			let productosFiltrados;
+			if (category === 'all') {
+				productosFiltrados = todosLosProductos;
+			} else {
+				productosFiltrados = todosLosProductos.filter(producto => 
+					producto.categoria === category
+				);
 			}
+			
+			// Si no hay productos en la categoría
+			if (productosFiltrados.length === 0) {
+				container.innerHTML = '';
+				noProductosDiv.style.display = 'block';
+				noProductosDiv.innerHTML = `
+					<i class="fa fa-info-circle fa-3x" style="color: #D4A574;"></i>
+					<h3 style="margin-top: 20px; color: #666;">No hay productos en esta categoría</h3>
+					<p style="color: #999;">Estamos preparando nuevas joyas para ti.</p>
+				`;
+				return;
+			}
+			
+			// Regenerar HTML con productos filtrados
+			container.innerHTML = generateProductsHTML(productosFiltrados);
+			noProductosDiv.style.display = 'none';
+			
+			// Reinicializar modales para los productos filtrados
+			initializeModals(productosFiltrados);
 		}
 
 		// Function to open custom form modal
@@ -1276,30 +1261,53 @@
 
 					// Get form data
 					const formData = new FormData(contactForm);
+					
+					// Agregar tipo de solicitud
+					formData.append('tipo', 'personalizado');
+					
+					// Convertir a formato para la API
+					const apiData = new FormData();
+					apiData.append('nombre', formData.get('name'));
+					apiData.append('email', formData.get('email'));
+					apiData.append('telefono', formData.get('phone'));
+					
+					// Construir mensaje completo
+					let mensaje = formData.get('message') || '';
+					mensaje += '\n\n--- Detalles ---';
+					mensaje += '\nTipo de joya: ' + (formData.get('jewelry_type') || 'No especificado');
+					if (formData.get('engraving')) {
+						mensaje += '\nTexto a grabar: ' + formData.get('engraving');
+					}
+					
+					apiData.append('mensaje', mensaje);
+					apiData.append('tipo', 'personalizado');
 
 					// Send AJAX request
-					fetch('contact-form.php', {
+					fetch('api/solicitud.php', {
 						method: 'POST',
-						body: formData
+						body: apiData
 					})
 					.then(response => response.json())
 					.then(data => {
 						if (data.success) {
-							// Success
-							showMessage(data.message, 'success');
+							// Success - Guardar en BD y obtener URL de WhatsApp
+							showMessage('✅ Solicitud guardada. Redirigiendo a WhatsApp...', 'success');
 							contactForm.reset();
+							
 							// Track successful form submission
 							if (typeof trackFormSubmission === 'function') {
 								trackFormSubmission();
 							}
+							
+							// Redirigir a WhatsApp después de 1.5 segundos
+							setTimeout(() => {
+								window.open(data.whatsapp_url, '_blank');
+								showMessage('📱 WhatsApp abierto. Si no se abrió automáticamente, haz click en el botón de abajo.', 'success');
+							}, 1500);
+							
 						} else {
 							// Error
-							showMessage(data.message, 'error');
-							if (data.errors) {
-								data.errors.forEach(error => {
-									console.log('Error:', error);
-								});
-							}
+							showMessage(data.error || 'Error al enviar la solicitud', 'error');
 						}
 					})
 					.catch(error => {
@@ -1340,81 +1348,93 @@
 				const cookieModalClose = document.getElementById('cookie-modal-close');
 				const cookieSaveSettings = document.getElementById('cookie-save-settings');
 
-				// Check if user has already made a choice
-				const cookieConsent = localStorage.getItem('cookieConsent');
-				if (!cookieConsent) {
-					// Show banner after 2 seconds
-					setTimeout(() => {
-						cookieBanner.style.display = 'block';
-					}, 2000);
-				} else {
-					// Apply saved preferences
-					applyCookieSettings(JSON.parse(cookieConsent));
-				}
-
-				// Accept all cookies
-				cookieAcceptAll.addEventListener('click', function() {
-					const consent = {
-						necessary: true,
-						analytics: true,
-						marketing: true,
-						timestamp: new Date().toISOString()
-					};
-					saveCookieConsent(consent);
-					hideCookieBanner();
-					applyCookieSettings(consent);
-				});
-
-				// Show settings modal
-				cookieSettings.addEventListener('click', function() {
-					cookieModal.style.display = 'flex';
-				});
-
-				// Reject all non-necessary cookies
-				cookieReject.addEventListener('click', function() {
-					const consent = {
-						necessary: true,
-						analytics: false,
-						marketing: false,
-						timestamp: new Date().toISOString()
-					};
-					saveCookieConsent(consent);
-					hideCookieBanner();
-					applyCookieSettings(consent);
-				});
-
-				// Close modal
-				cookieModalClose.addEventListener('click', function() {
-					cookieModal.style.display = 'none';
-				});
-
-				// Save custom settings
-				cookieSaveSettings.addEventListener('click', function() {
-					const consent = {
-						necessary: true,
-						analytics: document.getElementById('analytics-cookies').checked,
-						marketing: document.getElementById('marketing-cookies').checked,
-						timestamp: new Date().toISOString()
-					};
-					saveCookieConsent(consent);
-					hideCookieBanner();
-					cookieModal.style.display = 'none';
-					applyCookieSettings(consent);
-				});
-
-				// Close modal when clicking outside
-				cookieModal.addEventListener('click', function(e) {
-					if (e.target === cookieModal) {
-						cookieModal.style.display = 'none';
+				// Verificar que los elementos existen antes de usarlos
+				if (cookieBanner && cookieAcceptAll && cookieSettings && cookieReject) {
+					// Check if user has already made a choice
+					const cookieConsent = localStorage.getItem('cookieConsent');
+					if (!cookieConsent) {
+						// Show banner after 2 seconds
+						setTimeout(() => {
+							if (cookieBanner) cookieBanner.style.display = 'block';
+						}, 2000);
+					} else {
+						// Apply saved preferences
+						applyCookieSettings(JSON.parse(cookieConsent));
 					}
-				});
+
+					// Accept all cookies
+					cookieAcceptAll.addEventListener('click', function() {
+						const consent = {
+							necessary: true,
+							analytics: true,
+							marketing: true,
+							timestamp: new Date().toISOString()
+						};
+						saveCookieConsent(consent);
+						hideCookieBanner();
+						applyCookieSettings(consent);
+					});
+
+					// Show settings modal
+					cookieSettings.addEventListener('click', function() {
+						if (cookieModal) cookieModal.style.display = 'flex';
+					});
+
+					// Reject all non-necessary cookies
+					cookieReject.addEventListener('click', function() {
+						const consent = {
+							necessary: true,
+							analytics: false,
+							marketing: false,
+							timestamp: new Date().toISOString()
+						};
+						saveCookieConsent(consent);
+						hideCookieBanner();
+						applyCookieSettings(consent);
+					});
+
+					// Close modal
+					if (cookieModalClose) {
+						cookieModalClose.addEventListener('click', function() {
+							if (cookieModal) cookieModal.style.display = 'none';
+						});
+					}
+
+					// Save custom settings
+					if (cookieSaveSettings) {
+						cookieSaveSettings.addEventListener('click', function() {
+							const analyticsCheckbox = document.getElementById('analytics-cookies');
+							const marketingCheckbox = document.getElementById('marketing-cookies');
+							const consent = {
+								necessary: true,
+								analytics: analyticsCheckbox ? analyticsCheckbox.checked : false,
+								marketing: marketingCheckbox ? marketingCheckbox.checked : false,
+								timestamp: new Date().toISOString()
+							};
+							saveCookieConsent(consent);
+							hideCookieBanner();
+							if (cookieModal) cookieModal.style.display = 'none';
+							applyCookieSettings(consent);
+						});
+					}
+
+					// Close modal when clicking outside
+					if (cookieModal) {
+						cookieModal.addEventListener('click', function(e) {
+							if (e.target === cookieModal) {
+								cookieModal.style.display = 'none';
+							}
+						});
+					}
+				}
 
 				function saveCookieConsent(consent) {
 					localStorage.setItem('cookieConsent', JSON.stringify(consent));
 				}
 
 				function hideCookieBanner() {
-					cookieBanner.style.display = 'none';
+					const cookieBanner = document.getElementById('cookie-banner');
+					if (cookieBanner) cookieBanner.style.display = 'none';
 				}
 
 				function applyCookieSettings(consent) {

@@ -1,13 +1,14 @@
 <?php
 require_once 'auth.php';
+require_once 'database.php';
 
-// Cargar datos para estadísticas
-$data = loadProductos();
-$productos = $data['productos'];
+// Obtener estadísticas desde MySQL
+$stats = getEstadisticas();
+$productos = getAllProductos();
 
 // Calcular estadísticas
-$totalProductos = count($productos);
-$productosActivos = count(array_filter($productos, function($p) { return $p['activo']; }));
+$totalProductos = $stats['total_productos'];
+$productosActivos = $stats['productos_activos'];
 $productosInactivos = $totalProductos - $productosActivos;
 
 // Calcular precio promedio

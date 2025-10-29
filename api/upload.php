@@ -4,17 +4,16 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Incluir configuración
-require_once '../admin/config.php';
-
-// Verificar que sea POST y que el usuario esté logueado
+// Verificar que sea POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Método no permitido']);
     exit;
 }
 
-if (!isLoggedIn()) {
+// Verificar sesión de admin
+session_start();
+if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     http_response_code(401);
     echo json_encode(['success' => false, 'error' => 'No autorizado']);
     exit;

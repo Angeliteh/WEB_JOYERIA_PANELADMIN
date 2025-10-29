@@ -1,8 +1,8 @@
 <?php
-require_once 'config.php';
+session_start();
 
 // Si ya está logueado, redirigir al dashboard
-if (isLoggedIn()) {
+if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
     header('Location: dashboard.php');
     exit;
 }
@@ -13,8 +13,10 @@ if ($_POST) {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     
-    if (checkLogin($username, $password)) {
-        doLogin();
+    // Credenciales por defecto (cambiar en producción)
+    if ($username === 'admin' && $password === 'admin') {
+        $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_username'] = $username;
         header('Location: dashboard.php');
         exit;
     } else {
@@ -27,12 +29,12 @@ if ($_POST) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Elena Martínez Fragancias</title>
+    <title>Admin - Joyería Matt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #D4A574 0%, #8B5A96 100%);
+            background: linear-gradient(135deg, #D4A574 0%, #8B7355 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -47,7 +49,7 @@ if ($_POST) {
             width: 100%;
         }
         .login-header {
-            background: linear-gradient(135deg, #D4A574 0%, #8B5A96 100%);
+            background: linear-gradient(135deg, #D4A574 0%, #8B7355 100%);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -66,7 +68,7 @@ if ($_POST) {
             box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
         }
         .btn-login {
-            background: linear-gradient(135deg, #D4A574 0%, #8B5A96 100%);
+            background: linear-gradient(135deg, #D4A574 0%, #8B7355 100%);
             border: none;
             border-radius: 10px;
             padding: 12px;
@@ -91,9 +93,9 @@ if ($_POST) {
             <div class="col-md-6">
                 <div class="login-container">
                     <div class="login-header">
-                        <i class="fas fa-user-shield fa-3x mb-3"></i>
+                        <i class="fas fa-gem fa-3x mb-3"></i>
                         <h3>Panel de Administración</h3>
-                        <p class="mb-0">Elena Martínez Fragancias</p>
+                        <p class="mb-0">Joyería Matt</p>
                     </div>
                     <div class="login-body">
                         <?php if ($error): ?>

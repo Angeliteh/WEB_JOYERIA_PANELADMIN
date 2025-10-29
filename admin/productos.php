@@ -1,602 +1,605 @@
 <?php
-require_once 'auth.php';
+/**
+ * JOYERÍA MATT - Panel de Administración de Productos
+ * Versión MySQL - Reemplaza productos.php
+ */
 
-// Procesar acciones
+require_once 'auth.php';
+require_once 'database.php';
+
+// Variables de control
 $action = $_GET['action'] ?? 'list';
 $id = $_GET['id'] ?? null;
 $message = '';
 $messageType = '';
 
-// Cargar productos
-$data = loadProductos();
-
-// Procesar formularios
-if ($_POST) {
-    if ($action === 'add') {
-        // Agregar nuevo producto
-        $nuevoProducto = [
-            'id' => generateProductId(),
-            'nombre' => $_POST['nombre'],
-            'precio' => $_POST['precio'],
-            'categoria' => $_POST['categoria'],
-            'descripcion' => $_POST['descripcion'],
-            'imagen' => $_POST['imagen'] ?: 'images/demo/default.jpg',
-            'material' => $_POST['material'],
-            'tiempo_entrega' => $_POST['tiempo_entrega'],
-            'personalizacion' => $_POST['personalizacion'],
-            'peso_aproximado' => $_POST['peso_aproximado'],
-            'garantia' => $_POST['garantia'],
-            'activo' => isset($_POST['activo']),
-            'fecha_creacion' => date('Y-m-d')
-        ];
+// ============================================
+// FUNCIÓN: Procesar subida de imagen
+// ============================================
+function procesarImagenProducto($productoId = null) {
+    $uploadDir = '../data/uploads/';
+    
+    // Crear directorio si no existe
+    if (!file_exists($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+    
+    // Si hay archivo subido
+    if (isset($_FILES['imagen_nueva']) && $_FILES['imagen_nueva']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['imagen_nueva'];
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        $maxFileSize = 5 * 1024 * 1024; // 5MB
         
-        $data['productos'][] = $nuevoProducto;
+        // Validar tipo
+        if (!in_array($file['type'], $allowedTypes)) {
+            throw new Exception('Tipo de archivo no permitido. Solo JPG, PNG, GIF, WEBP');
+        }
         
-        if (saveProductos($data)) {
-            $message = 'Producto agregado exitosamente';
-            $messageType = 'success';
-            $action = 'list'; // Volver a la lista
+        // Validar tamaño
+        if ($file['size'] > $maxFileSize) {
+            throw new Exception('Imagen muy grande. Máximo 5MB');
+        }
+        
+        // Generar nombre único
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $nombreLimpio = preg_replace('/[^a-z0-9-]/', '-', strtolower(pathinfo($file['name'], PATHINFO_FILENAME)));
+        $nombreArchivo = $nombreLimpio . '-' . time() . '.' . $extension;
+        $rutaDestino = $uploadDir . $nombreArchivo;
+        
+        // Mover archivo
+        if (move_uploaded_file($file['tmp_name'], $rutaDestino)) {
+            return 'data/uploads/' . $nombreArchivo;
         } else {
-            $message = 'Error al guardar el producto';
-            $messageType = 'danger';
+            throw new Exception('Error al subir la imagen');
         }
-        
-    } elseif ($action === 'edit' && $id) {
-        // Editar producto existente
-        foreach ($data['productos'] as &$producto) {
-            if ($producto['id'] == $id) {
-                $producto['nombre'] = $_POST['nombre'];
-                $producto['precio'] = $_POST['precio'];
-                $producto['categoria'] = $_POST['categoria'];
-                $producto['descripcion'] = $_POST['descripcion'];
-                $producto['imagen'] = $_POST['imagen'] ?: $producto['imagen'];
-                $producto['material'] = $_POST['material'];
-                $producto['tiempo_entrega'] = $_POST['tiempo_entrega'];
-                $producto['personalizacion'] = $_POST['personalizacion'];
-                $producto['peso_aproximado'] = $_POST['peso_aproximado'];
-                $producto['garantia'] = $_POST['garantia'];
-                $producto['activo'] = isset($_POST['activo']);
-                break;
-            }
-        }
-        
-        if (saveProductos($data)) {
+    }
+    
+    // Si no hay archivo nuevo, mantener la imagen actual
+    return $_POST['imagen_actual'] ?? '';
+}
+
+// ============================================
+// PROCESAR FORMULARIOS (POST)
+// ============================================
+if ($_POST) {
+    try {
+        if ($action === 'add') {
+            // Procesar imagen
+            $rutaImagen = procesarImagenProducto();
+            
+            // AGREGAR NUEVO PRODUCTO
+            $nuevoProducto = [
+                'nombre' => $_POST['nombre'],
+                'precio' => floatval($_POST['precio']),
+                'categoria' => $_POST['categoria'],
+                'descripcion' => $_POST['descripcion'],
+                'imagen' => $rutaImagen,
+                'material' => $_POST['material'],
+                'tiempo_entrega' => $_POST['tiempo_entrega'],
+                'personalizacion' => $_POST['personalizacion'],
+                'peso_aproximado' => $_POST['peso_aproximado'],
+                'garantia' => $_POST['garantia'],
+                'activo' => isset($_POST['activo']) ? 1 : 0
+            ];
+            
+            $nuevoId = createProducto($nuevoProducto);
+            $message = "Producto agregado exitosamente (ID: $nuevoId)";
+            $messageType = 'success';
+            $action = 'list';
+            
+        } elseif ($action === 'edit' && $id) {
+            // Procesar imagen (nueva o mantener actual)
+            $rutaImagen = procesarImagenProducto($id);
+            
+            // EDITAR PRODUCTO EXISTENTE
+            $productoActualizado = [
+                'nombre' => $_POST['nombre'],
+                'precio' => floatval($_POST['precio']),
+                'categoria' => $_POST['categoria'],
+                'descripcion' => $_POST['descripcion'],
+                'imagen' => $rutaImagen,
+                'material' => $_POST['material'],
+                'tiempo_entrega' => $_POST['tiempo_entrega'],
+                'personalizacion' => $_POST['personalizacion'],
+                'peso_aproximado' => $_POST['peso_aproximado'],
+                'garantia' => $_POST['garantia'],
+                'activo' => isset($_POST['activo']) ? 1 : 0
+            ];
+            
+            updateProducto($id, $productoActualizado);
             $message = 'Producto actualizado exitosamente';
             $messageType = 'success';
-            $action = 'list'; // Volver a la lista
-        } else {
-            $message = 'Error al actualizar el producto';
-            $messageType = 'danger';
+            $action = 'list';
         }
+        
+    } catch (Exception $e) {
+        $message = 'Error: ' . $e->getMessage();
+        $messageType = 'danger';
     }
 }
 
-// Procesar eliminación
+// ============================================
+// PROCESAR ACCIONES (GET)
+// ============================================
 if ($action === 'delete' && $id) {
-    $data['productos'] = array_filter($data['productos'], function($p) use ($id) {
-        return $p['id'] != $id;
-    });
-    
-    if (saveProductos($data)) {
+    try {
+        deleteProducto($id);
         $message = 'Producto eliminado exitosamente';
         $messageType = 'success';
-    } else {
-        $message = 'Error al eliminar el producto';
+    } catch (Exception $e) {
+        $message = 'Error al eliminar: ' . $e->getMessage();
         $messageType = 'danger';
     }
     $action = 'list';
 }
 
-// Procesar toggle activo/inactivo
 if ($action === 'toggle' && $id) {
-    foreach ($data['productos'] as &$producto) {
-        if ($producto['id'] == $id) {
-            $producto['activo'] = !$producto['activo'];
-            break;
-        }
-    }
-    
-    if (saveProductos($data)) {
+    try {
+        toggleProductoActivo($id);
         $message = 'Estado del producto actualizado';
         $messageType = 'success';
-    } else {
-        $message = 'Error al actualizar el estado';
+    } catch (Exception $e) {
+        $message = 'Error: ' . $e->getMessage();
         $messageType = 'danger';
     }
     $action = 'list';
 }
 
-// Recargar datos después de cambios
-$data = loadProductos();
+// ============================================
+// CARGAR DATOS SEGÚN LA ACCIÓN
+// ============================================
+$productos = [];
+$productoEditar = null;
+$categoriaFiltro = $_GET['categoria'] ?? 'todas';
 
-showAdminHeader('Gestión de Productos');
+if ($action === 'list') {
+    $todosProductos = getAllProductos(); // Todos los productos (activos e inactivos)
+    
+    // Filtrar por categoría si se seleccionó una
+    if ($categoriaFiltro !== 'todas') {
+        $productos = array_filter($todosProductos, function($p) use ($categoriaFiltro) {
+            return $p['categoria'] === $categoriaFiltro;
+        });
+    } else {
+        $productos = $todosProductos;
+    }
+    
+    // Obtener categorías únicas para el filtro
+    $categorias = array_unique(array_column($todosProductos, 'categoria'));
+    sort($categorias);
+    
+} elseif ($action === 'edit' && $id) {
+    $productoEditar = getProductoById($id);
+    if (!$productoEditar) {
+        $message = 'Producto no encontrado';
+        $messageType = 'danger';
+        $action = 'list';
+        $productos = getAllProductos();
+    }
+}
+
 ?>
-
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1><i class="fas fa-spray-can"></i> Gestión de Productos</h1>
-            <?php if ($action === 'list'): ?>
-                <a href="?action=add" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Agregar Producto
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - Joyería Matt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #D4A574;
+            --secondary-color: #8B7355;
+        }
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+        }
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        .table-hover tbody tr:hover {
+            background-color: #fff8f0;
+        }
+        .badge {
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.php">
+                <i class="fas fa-gem me-2"></i>
+                Joyería Matt - Admin
+            </a>
+            <div class="d-flex">
+                <a href="dashboard.php" class="btn btn-outline-light me-2">
+                    <i class="fas fa-home"></i> Dashboard
                 </a>
-            <?php else: ?>
-                <a href="productos.php" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left"></i> Volver a la lista
+                <a href="logout.php" class="btn btn-outline-light">
+                    <i class="fas fa-sign-out-alt"></i> Salir
                 </a>
-            <?php endif; ?>
+            </div>
         </div>
-    </div>
-</div>
+    </nav>
 
-<?php if ($message): ?>
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-<?= $messageType ?> alert-dismissible fade show" role="alert">
-            <i class="fas fa-<?= $messageType === 'success' ? 'check-circle' : 'exclamation-triangle' ?>"></i>
-            <?= $message ?>
+    <div class="container mt-4">
+        <!-- Mensajes -->
+        <?php if ($message): ?>
+        <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
+            <i class="fas fa-<?php echo $messageType === 'success' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
+            <?php echo $message; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    </div>
-</div>
-<?php endif; ?>
+        <?php endif; ?>
 
-<?php if ($action === 'list'): ?>
-    <!-- LISTA DE PRODUCTOS -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-list"></i> Lista de Productos (<?= count($data['productos']) ?>)
+        <?php if ($action === 'list'): ?>
+        <!-- VISTA: LISTA DE PRODUCTOS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-box-open me-2"></i>
+                        Gestión de Productos
+                    </h4>
+                    <a href="?action=add" class="btn btn-light">
+                        <i class="fas fa-plus"></i> Agregar Producto
+                    </a>
                 </div>
-                <div class="card-body">
-                    <?php if (empty($data['productos'])): ?>
-                        <div class="text-center text-muted py-5">
-                            <i class="fas fa-inbox fa-4x mb-3"></i>
-                            <h4>No hay productos registrados</h4>
-                            <p>Comienza agregando tu primer producto al catálogo</p>
-                            <a href="?action=add" class="btn btn-primary btn-lg">
-                                <i class="fas fa-plus"></i> Agregar Primer Producto
-                            </a>
+            </div>
+            <div class="card-body">
+                <!-- Filtros -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label"><i class="fas fa-filter"></i> Filtrar por Categoría:</label>
+                        <select class="form-select" onchange="window.location.href='?action=list&categoria=' + this.value">
+                            <option value="todas" <?php echo $categoriaFiltro === 'todas' ? 'selected' : ''; ?>>
+                                📦 Todas las Categorías (<?php echo count($todosProductos); ?>)
+                            </option>
+                            <?php foreach ($categorias as $cat): ?>
+                                <?php 
+                                $count = count(array_filter($todosProductos, function($p) use ($cat) {
+                                    return $p['categoria'] === $cat;
+                                }));
+                                ?>
+                                <option value="<?php echo htmlspecialchars($cat); ?>" 
+                                        <?php echo $categoriaFiltro === $cat ? 'selected' : ''; ?>>
+                                    💎 <?php echo htmlspecialchars($cat); ?> (<?php echo $count; ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-8 d-flex align-items-end">
+                        <div class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            Mostrando <strong><?php echo count($productos); ?></strong> producto(s)
+                            <?php if ($categoriaFiltro !== 'todas'): ?>
+                                de la categoría <strong><?php echo htmlspecialchars($categoriaFiltro); ?></strong>
+                                <a href="?action=list&categoria=todas" class="btn btn-sm btn-outline-secondary ms-2">
+                                    <i class="fas fa-times"></i> Limpiar filtro
+                                </a>
+                            <?php endif; ?>
                         </div>
-                    <?php else: ?>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Producto</th>
-                                        <th>Precio</th>
-                                        <th>Categoría</th>
-                                        <th>Estado</th>
-                                        <th>Fecha</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($data['productos'] as $producto): ?>
-                                    <tr>
-                                        <td><strong>#<?= $producto['id'] ?></strong></td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="../<?= $producto['imagen'] ?>" 
-                                                     alt="<?= htmlspecialchars($producto['nombre']) ?>"
-                                                     class="rounded me-2" 
-                                                     style="width: 40px; height: 40px; object-fit: cover;">
-                                                <div>
-                                                    <strong><?= htmlspecialchars($producto['nombre']) ?></strong>
-                                                    <br><small class="text-muted"><?= substr($producto['descripcion'], 0, 50) ?>...</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td><strong>$<?= number_format($producto['precio']) ?></strong> MXN</td>
-                                        <td><?= htmlspecialchars($producto['categoria']) ?></td>
-                                        <td>
-                                            <?php if ($producto['activo']): ?>
-                                                <span class="badge bg-success">Activo</span>
-                                            <?php else: ?>
-                                                <span class="badge bg-secondary">Inactivo</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td><?= date('d/m/Y', strtotime($producto['fecha_creacion'])) ?></td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="?action=edit&id=<?= $producto['id'] ?>" 
-                                                   class="btn btn-outline-primary" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="?action=toggle&id=<?= $producto['id'] ?>" 
-                                                   class="btn btn-outline-<?= $producto['activo'] ? 'warning' : 'success' ?>" 
-                                                   title="<?= $producto['activo'] ? 'Desactivar' : 'Activar' ?>">
-                                                    <i class="fas fa-<?= $producto['activo'] ? 'eye-slash' : 'eye' ?>"></i>
-                                                </a>
-                                                <a href="?action=delete&id=<?= $producto['id'] ?>" 
-                                                   class="btn btn-outline-danger" 
-                                                   title="Eliminar"
-                                                   onclick="return confirm('¿Estás segura de eliminar este producto?')">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($productos as $producto): ?>
+                            <tr>
+                                <td><?php echo $producto['id']; ?></td>
+                                <td>
+                                    <?php if (file_exists('../' . $producto['imagen'])): ?>
+                                        <img src="../<?php echo $producto['imagen']; ?>" 
+                                             class="product-image" 
+                                             alt="<?php echo htmlspecialchars($producto['nombre']); ?>">
+                                    <?php else: ?>
+                                        <div class="product-image d-flex align-items-center justify-content-center bg-light">
+                                            <i class="fas fa-gem text-muted"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo htmlspecialchars($producto['nombre']); ?></td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <?php echo htmlspecialchars($producto['categoria']); ?>
+                                    </span>
+                                </td>
+                                <td>$<?php echo number_format($producto['precio'], 2); ?> MXN</td>
+                                <td>
+                                    <?php if ($producto['activo']): ?>
+                                        <span class="badge bg-success">Activo</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="?action=edit&id=<?php echo $producto['id']; ?>" 
+                                           class="btn btn-sm btn-primary" 
+                                           title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="?action=toggle&id=<?php echo $producto['id']; ?>" 
+                                           class="btn btn-sm btn-warning" 
+                                           title="Activar/Desactivar">
+                                            <i class="fas fa-toggle-on"></i>
+                                        </a>
+                                        <a href="?action=delete&id=<?php echo $producto['id']; ?>" 
+                                           class="btn btn-sm btn-danger" 
+                                           title="Eliminar"
+                                           onclick="return confirm('¿Estás seguro de eliminar este producto?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <p class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Total de productos: <strong><?php echo count($productos); ?></strong>
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
 
-<?php elseif ($action === 'add' || $action === 'edit'): ?>
-    <!-- FORMULARIO AGREGAR/EDITAR PRODUCTO -->
-    <?php
-    $producto = null;
-    if ($action === 'edit' && $id) {
-        foreach ($data['productos'] as $p) {
-            if ($p['id'] == $id) {
-                $producto = $p;
-                break;
-            }
-        }
-    }
-    ?>
-    
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-<?= $action === 'add' ? 'plus' : 'edit' ?>"></i> 
-                    <?= $action === 'add' ? 'Agregar Nuevo Producto' : 'Editar Producto' ?>
-                </div>
-                <div class="card-body">
-                    <form method="POST">
-                        <!-- SECCIÓN 1: INFORMACIÓN BÁSICA -->
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-info-circle"></i> Información Básica
-                            </h5>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label class="form-label">Nombre de la Joya *</label>
-                                        <input type="text" name="nombre" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['nombre']) : '' ?>"
-                                               required placeholder="Ej: Anillo de Graduación Ingeniería">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Precio Base (MXN) *</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">$</span>
-                                            <input type="number" name="precio" class="form-control"
-                                                   value="<?= $producto ? $producto['precio'] : '' ?>"
-                                                   required placeholder="850">
+        <?php elseif ($action === 'add' || $action === 'edit'): ?>
+        <!-- VISTA: FORMULARIO (AGREGAR/EDITAR) -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-<?php echo $action === 'add' ? 'plus' : 'edit'; ?> me-2"></i>
+                    <?php echo $action === 'add' ? 'Agregar Nuevo Producto' : 'Editar Producto'; ?>
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="?action=<?php echo $action; ?><?php echo $id ? '&id='.$id : ''; ?>" enctype="multipart/form-data">
+                    <div class="row">
+                        <!-- Nombre -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nombre del Producto *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="nombre" 
+                                   value="<?php echo $productoEditar['nombre'] ?? ''; ?>" 
+                                   required>
+                        </div>
+
+                        <!-- Precio -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Precio (MXN) *</label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   name="precio" 
+                                   step="0.01" 
+                                   value="<?php echo $productoEditar['precio'] ?? ''; ?>" 
+                                   required>
+                        </div>
+
+                        <!-- Categoría -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Categoría *</label>
+                            <select class="form-select" name="categoria" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Anillos de Graduación" <?php echo ($productoEditar['categoria'] ?? '') === 'Anillos de Graduación' ? 'selected' : ''; ?>>
+                                    Anillos de Graduación
+                                </option>
+                                <option value="Anillos de Compromiso" <?php echo ($productoEditar['categoria'] ?? '') === 'Anillos de Compromiso' ? 'selected' : ''; ?>>
+                                    Anillos de Compromiso
+                                </option>
+                                <option value="Argollas Matrimoniales" <?php echo ($productoEditar['categoria'] ?? '') === 'Argollas Matrimoniales' ? 'selected' : ''; ?>>
+                                    Argollas Matrimoniales
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Material -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Material</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="material" 
+                                   value="<?php echo $productoEditar['material'] ?? ''; ?>" 
+                                   placeholder="Ej: Oro 14k, Plata 925">
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Descripción</label>
+                            <textarea class="form-control" 
+                                      name="descripcion" 
+                                      rows="4"><?php echo $productoEditar['descripcion'] ?? ''; ?></textarea>
+                        </div>
+
+                        <!-- Imagen -->
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Imagen del Producto</label>
+                            
+                            <?php if ($action === 'edit' && !empty($productoEditar['imagen'])): ?>
+                                <!-- Mostrar imagen actual -->
+                                <div class="mb-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <?php if (file_exists('../' . $productoEditar['imagen'])): ?>
+                                            <img src="../<?php echo $productoEditar['imagen']; ?>" 
+                                                 style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px; border: 2px solid #ddd;">
+                                        <?php else: ?>
+                                            <div style="width: 150px; height: 150px; border-radius: 10px; border: 2px solid #ddd; display: flex; align-items: center; justify-content: center; background: #f5f5f5;">
+                                                <i class="fas fa-gem fa-3x text-muted"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div>
+                                            <p class="mb-1"><strong>Imagen actual:</strong></p>
+                                            <small class="text-muted"><?php echo basename($productoEditar['imagen']); ?></small>
                                         </div>
                                     </div>
                                 </div>
+                                <input type="hidden" name="imagen_actual" value="<?php echo $productoEditar['imagen']; ?>">
+                            <?php endif; ?>
+                            
+                            <!-- Campo para subir nueva imagen -->
+                            <div class="mb-2">
+                                <input type="file" 
+                                       class="form-control" 
+                                       name="imagen_nueva" 
+                                       id="imagenNueva"
+                                       accept="image/*"
+                                       onchange="previewImagen(this)">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle"></i> 
+                                    <?php if ($action === 'edit'): ?>
+                                        Deja vacío para mantener la imagen actual. Sube una nueva para reemplazarla.
+                                    <?php else: ?>
+                                        Selecciona una imagen (JPG, PNG, GIF, WEBP - Máx. 5MB)
+                                    <?php endif; ?>
+                                </small>
                             </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Categoría *</label>
-                                        <select name="categoria" class="form-control" required>
-                                            <option value="">Seleccionar categoría...</option>
-                                            <option value="Anillos de Graduación" <?= (!$producto || $producto['categoria'] === 'Anillos de Graduación') ? 'selected' : '' ?>>Anillos de Graduación</option>
-                                            <option value="Anillos de Compromiso" <?= ($producto && $producto['categoria'] === 'Anillos de Compromiso') ? 'selected' : '' ?>>Anillos de Compromiso</option>
-                                            <option value="Argollas Matrimoniales" <?= ($producto && $producto['categoria'] === 'Argollas Matrimoniales') ? 'selected' : '' ?>>Argollas Matrimoniales</option>
-                                            <option value="Relojes" <?= ($producto && $producto['categoria'] === 'Relojes') ? 'selected' : '' ?>>Relojes</option>
-                                            <option value="Carátulas" <?= ($producto && $producto['categoria'] === 'Carátulas') ? 'selected' : '' ?>>Carátulas</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Material *</label>
-                                        <input type="text" name="material" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['material']) : '' ?>"
-                                               required placeholder="Ej: Plata 925, Oro 14k">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Descripción *</label>
-                                <textarea name="descripcion" class="form-control" rows="3" required
-                                          placeholder="Descripción detallada de la joya, materiales, ocasión de uso..."><?= $producto ? htmlspecialchars($producto['descripcion']) : '' ?></textarea>
+                            
+                            <!-- Preview de nueva imagen -->
+                            <div id="previewContainer" style="display: none;" class="mt-2">
+                                <p class="mb-1"><strong>Nueva imagen:</strong></p>
+                                <img id="previewImagen" 
+                                     style="width: 150px; height: 150px; object-fit: cover; border-radius: 10px; border: 2px solid #D4A574;">
                             </div>
                         </div>
 
-                        <hr>
-
-                        <!-- SECCIÓN 2: IMAGEN -->
-                        
-                        <div class="mb-4">
-                            <label class="form-label"><i class="fas fa-camera"></i> Imagen del Producto</label>
-
-                            <!-- Vista previa de imagen -->
-                            <div class="text-center mb-3">
-                                <div id="imagen-preview" class="d-inline-block" <?= !$producto || !$producto['imagen'] ? 'style="display:none !important;"' : '' ?>>
-                                    <img id="imagen-preview-img"
-                                         src="<?= $producto ? '../' . $producto['imagen'] : '' ?>"
-                                         alt="Vista previa"
-                                         class="img-thumbnail"
-                                         style="max-width: 300px; max-height: 200px; object-fit: cover;">
-                                </div>
-                                <div id="no-imagen" class="text-muted" <?= $producto && $producto['imagen'] ? 'style="display:none;"' : '' ?>>
-                                    <i class="fas fa-image fa-3x mb-2" style="color: #ddd;"></i>
-                                    <p>No hay imagen seleccionada</p>
-                                </div>
-                            </div>
-
-                            <!-- Subida de imagen simplificada -->
-                            <div class="row justify-content-center">
-                                <div class="col-md-8">
-                                    <div class="input-group">
-                                        <input type="file"
-                                               id="imagen-upload"
-                                               name="imagen_file"
-                                               class="form-control"
-                                               accept="image/*">
-                                        <button type="button"
-                                                id="cambiar-imagen-btn"
-                                                class="btn btn-outline-primary">
-                                            <i class="fas fa-upload"></i> Subir Imagen
-                                        </button>
-                                    </div>
-                                    <small class="text-muted d-block mt-1">
-                                        <i class="fas fa-info-circle"></i>
-                                        Formatos: JPG, PNG, GIF, WEBP • Máximo: 5MB
-                                    </small>
-                                </div>
-                            </div>
-
-                            <!-- Campo oculto para la ruta de la imagen -->
-                            <input type="hidden" id="imagen-url" name="imagen" value="<?= $producto ? htmlspecialchars($producto['imagen']) : '' ?>">
-
-                            <!-- Progreso y mensajes -->
-                            <div id="upload-progress" class="mt-3" style="display:none;">
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                         role="progressbar" style="width: 0%"></div>
-                                </div>
-                                <small class="text-muted d-block text-center mt-1">Subiendo imagen...</small>
-                            </div>
-
-                            <div id="imagen-error" class="alert alert-danger mt-3" style="display:none;"></div>
-                            <div id="imagen-success" class="alert alert-success mt-3" style="display:none;"></div>
+                        <!-- Tiempo de Entrega -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tiempo de Entrega</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="tiempo_entrega" 
+                                   value="<?php echo $productoEditar['tiempo_entrega'] ?? ''; ?>" 
+                                   placeholder="Ej: 7-10 días hábiles">
                         </div>
 
-                        <hr>
-
-                        <!-- SECCIÓN 3: DETALLES DE LA JOYA -->
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-gem"></i> Detalles de la Joya
-                            </h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">
-                                            <i class="fas fa-clock text-warning"></i> Tiempo de Entrega
-                                        </label>
-                                        <input type="text" name="tiempo_entrega" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['tiempo_entrega']) : '' ?>"
-                                               placeholder="Ej: 7-10 días hábiles">
-                                        <small class="text-muted">Tiempo estimado de fabricación</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">
-                                            <i class="fas fa-weight text-info"></i> Peso Aproximado
-                                        </label>
-                                        <input type="text" name="peso_aproximado" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['peso_aproximado']) : '' ?>"
-                                               placeholder="Ej: 8-12 gramos">
-                                        <small class="text-muted">Peso estimado de la joya</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">
-                                            <i class="fas fa-edit text-success"></i> Personalización Disponible
-                                        </label>
-                                        <input type="text" name="personalizacion" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['personalizacion']) : '' ?>"
-                                               placeholder="Ej: Grabado de nombres, fechas">
-                                        <small class="text-muted">Opciones de personalización</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">
-                                            <i class="fas fa-shield-alt text-primary"></i> Garantía
-                                        </label>
-                                        <input type="text" name="garantia" class="form-control"
-                                               value="<?= $producto ? htmlspecialchars($producto['garantia']) : '' ?>"
-                                               placeholder="Ej: 6 meses contra defectos">
-                                        <small class="text-muted">Garantía ofrecida</small>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Personalización -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Personalización</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="personalizacion" 
+                                   value="<?php echo $productoEditar['personalizacion'] ?? ''; ?>" 
+                                   placeholder="Ej: Grabado de nombre y fecha">
                         </div>
 
-                        <hr>
+                        <!-- Peso Aproximado -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Peso Aproximado</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="peso_aproximado" 
+                                   value="<?php echo $productoEditar['peso_aproximado'] ?? ''; ?>" 
+                                   placeholder="Ej: 8-12 gramos">
+                        </div>
 
-                        <!-- SECCIÓN 4: CONFIGURACIÓN -->
-                        <div class="mb-4">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-cog"></i> Configuración
-                            </h5>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Estado del Producto</label>
-                                        <div class="form-check form-switch">
-                                            <input type="checkbox" name="activo" class="form-check-input" id="activo"
-                                                   <?= (!$producto || $producto['activo']) ? 'checked' : '' ?>>
-                                            <label class="form-check-label" for="activo">
-                                                <strong>Producto activo</strong> (visible en el sitio web)
-                                            </label>
-                                        </div>
-                                        <small class="text-muted">
-                                            Desactiva el producto para ocultarlo temporalmente sin eliminarlo
-                                        </small>
-                                    </div>
-                                </div>
+                        <!-- Garantía -->
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Garantía</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="garantia" 
+                                   value="<?php echo $productoEditar['garantia'] ?? ''; ?>" 
+                                   placeholder="Ej: Garantía en legitimidad de materiales">
+                        </div>
+
+                        <!-- Estado Activo -->
+                        <div class="col-12 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       name="activo" 
+                                       id="activo"
+                                       <?php echo ($productoEditar['activo'] ?? true) ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="activo">
+                                    Producto activo (visible en el sitio web)
+                                </label>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- BOTONES DE ACCIÓN -->
-                        <div class="d-flex gap-2 pt-3 border-top">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-save"></i>
-                                <?= $action === 'add' ? 'Agregar Producto' : 'Guardar Cambios' ?>
-                            </button>
-                            <a href="productos.php" class="btn btn-outline-secondary btn-lg">
-                                <i class="fas fa-arrow-left"></i> Volver a la lista
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="?action=list" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 
+                            <?php echo $action === 'add' ? 'Agregar Producto' : 'Guardar Cambios'; ?>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 
-<?php endif; ?>
-
-<script>
-// JavaScript simplificado para subida de imágenes
-document.addEventListener('DOMContentLoaded', function() {
-    const imagenUpload = document.getElementById('imagen-upload');
-    const imagenUrl = document.getElementById('imagen-url');
-    const imagenPreview = document.getElementById('imagen-preview');
-    const imagenPreviewImg = document.getElementById('imagen-preview-img');
-    const noImagen = document.getElementById('no-imagen');
-    const uploadProgress = document.getElementById('upload-progress');
-    const imagenError = document.getElementById('imagen-error');
-    const imagenSuccess = document.getElementById('imagen-success');
-
-    // Manejar subida de archivo
-    if (imagenUpload) {
-        imagenUpload.addEventListener('change', function(e) {
-            const archivo = e.target.files[0];
-            if (!archivo) return;
-
-            // Validar archivo
-            if (!validarArchivo(archivo)) return;
-
-            // Mostrar vista previa inmediata
-            mostrarVistaPrevia(archivo);
-
-            // Subir archivo automáticamente
-            subirArchivo(archivo);
-        });
-    }
-
-    function validarArchivo(archivo) {
-        // Validar tipo
-        const tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if (!tiposPermitidos.includes(archivo.type)) {
-            mostrarError('Solo se permiten imágenes: JPG, PNG, GIF, WEBP');
-            return false;
-        }
-
-        // Validar tamaño (5MB)
-        if (archivo.size > 5 * 1024 * 1024) {
-            mostrarError('La imagen es demasiado grande. Máximo 5MB');
-            return false;
-        }
-
-        return true;
-    }
-
-    function mostrarVistaPrevia(archivo) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagenPreviewImg.src = e.target.result;
-            imagenPreview.style.display = 'block';
-            noImagen.style.display = 'none';
-        };
-        reader.readAsDataURL(archivo);
-    }
-
-    function subirArchivo(archivo) {
-        const formData = new FormData();
-        formData.append('imagen', archivo);
-
-        // Mostrar progreso
-        uploadProgress.style.display = 'block';
-        const progressBar = uploadProgress.querySelector('.progress-bar');
-
-        // Crear XMLHttpRequest para mostrar progreso
-        const xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener('progress', function(e) {
-            if (e.lengthComputable) {
-                const porcentaje = (e.loaded / e.total) * 100;
-                progressBar.style.width = porcentaje + '%';
-                progressBar.textContent = Math.round(porcentaje) + '%';
-            }
-        });
-
-        xhr.addEventListener('load', function() {
-            uploadProgress.style.display = 'none';
-
-            if (xhr.status === 200) {
-                try {
-                    const respuesta = JSON.parse(xhr.responseText);
-                    if (respuesta.success) {
-                        // Actualizar campo URL con la ruta de la imagen subida
-                        imagenUrl.value = respuesta.ruta;
-                        mostrarExito('Imagen subida exitosamente');
-
-                        // Limpiar input de archivo
-                        imagenUpload.value = '';
-                    } else {
-                        mostrarError(respuesta.error || 'Error al subir la imagen');
-                    }
-                } catch (e) {
-                    mostrarError('Error al procesar la respuesta del servidor');
-                }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Preview de imagen antes de subir
+        function previewImagen(input) {
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImg = document.getElementById('previewImagen');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(input.files[0]);
             } else {
-                mostrarError('Error de conexión al subir la imagen');
+                previewContainer.style.display = 'none';
             }
-        });
-
-        xhr.addEventListener('error', function() {
-            uploadProgress.style.display = 'none';
-            mostrarError('Error de red al subir la imagen');
-        });
-
-        xhr.open('POST', '../api/upload.php');
-        xhr.send(formData);
-    }
-
-    function mostrarError(mensaje) {
-        imagenError.textContent = mensaje;
-        imagenError.style.display = 'block';
-        imagenSuccess.style.display = 'none';
-        setTimeout(() => {
-            imagenError.style.display = 'none';
-        }, 5000);
-    }
-
-    function mostrarExito(mensaje) {
-        imagenSuccess.textContent = mensaje;
-        imagenSuccess.style.display = 'block';
-        imagenError.style.display = 'none';
-        setTimeout(() => {
-            imagenSuccess.style.display = 'none';
-        }, 3000);
-    }
-});
-</script>
-
-<?php showAdminFooter(); ?>
+        }
+    </script>
+</body>
+</html>
